@@ -63,7 +63,9 @@
 
 import { Observable, forkJoin, of } from 'rxjs';
 import { mapDOMPosToStage } from 'game/engine/game-loop/render.utils';
-import { concat, map, tap, catchError } from 'rxjs/operators';
+import {
+  concat, map, tap, catchError,
+} from 'rxjs/operators';
 import { compose, curry } from 'ramda';
 
 import { load } from 'game/engine/asset-manager';
@@ -71,8 +73,8 @@ import { actions as gameEngineActions } from 'utils/store/ducks';
 import engine from 'game/engine';
 import { getWindow } from 'utils/global';
 
-import { ticker, createGameLoop } from '../game-loop';
 import { runOnWasmLoad } from 'utils/wasm.utils';
+import { ticker, createGameLoop } from '../game-loop';
 
 /**
  * _createLoadObs - creates the observer that first loads the loading scene assets
@@ -96,8 +98,7 @@ function _createLoadObs(wrappedScene) {
   //   state: { loadingScene: true },
   // };
   const launchLoadingScene$ = tap(null, null, () =>
-    engine.ui.dispatch(gameEngineActions.pushLocation({ path: loadingSceneObj.uiRoute }))
-  );
+    engine.ui.dispatch(gameEngineActions.pushLocation({ path: loadingSceneObj.uiRoute })));
 
   const setLoadPercentage$ = map(({ percentage }) => {
     engine.ui.dispatch(
@@ -131,7 +132,7 @@ function _createLoadObs(wrappedScene) {
  */
 function _loadScene(wrappedScene) {
   const loadScene$ = _createLoadObs(wrappedScene);
-  const  obs$ = (wrappedScene.willLoad)
+  const obs$ = (wrappedScene.willLoad)
     ? forkJoin(wrappedScene.willLoad(), loadScene$) : loadScene$;
 
   obs$.subscribe(
@@ -151,8 +152,7 @@ function setCljsWasmAdapter(props) {
   if (!(getWindow().game_config)) {
     getWindow().game_config = {};
   }
-  getWindow().game_config = {
-    ...getWindow().game_config, ...props };
+  getWindow().game_config = { ...getWindow().game_config, ...props };
 }
 
 /**
@@ -180,11 +180,10 @@ function _wrapInSceneHelpers(sceneObj) {
 
       runOnWasmLoad((wasmBindgen) => {
         if (sceneObj.update) {
-
           const createArrFromBuffer = (buffer) => {
-            const sliced = buffer.slice(0, parseInt(buffer[0]));
+            const sliced = buffer.slice(0, parseInt(buffer[0], 10));
             return Array.from(sliced);
-          }
+          };
 
           setCljsWasmAdapter({
             updateFn: (args) => {
@@ -195,14 +194,14 @@ function _wrapInSceneHelpers(sceneObj) {
               )(buffer);
             },
             // encode the keys into integers to make passing to rust more efficient
-            mapEventsKeyDict: (fn) => Object.keys(getWindow().game_config.eventsKeyDict).map((v, i) => fn(v, i)),
+            mapEventsKeyDict: fn => Object.keys(getWindow().game_config.eventsKeyDict).map((v, i) => fn(v, i)),
           });
 
           window.encoderKeys = sceneObj.encoderKeys;
           // should load earlier and be the last 10% that gets loaded
           const wasmGame = new wasmBindgen.LevelOne(sceneObj.encoderKeys, initConfig);
-          const updateFn = (dt) => wasmGame.get_update(dt);
-          const wasmUpdate = (a) => wasmGame.on_event(a);
+          const updateFn = dt => wasmGame.get_update(dt);
+          const wasmUpdate = a => wasmGame.on_event(a);
 
           engine.wasmUpdate = wasmUpdate;
           // wait on mount of ui elements
@@ -212,7 +211,7 @@ function _wrapInSceneHelpers(sceneObj) {
           let lastTime;
           const fps = 40;
           function tick(curTime) {
-            setTimeout(function() {
+            setTimeout(() => {
               const dt = curTime - lastTime;
               requestAnimationFrame(tick);
               updateFn(dt / 1000);
@@ -230,7 +229,6 @@ function _wrapInSceneHelpers(sceneObj) {
           // };
         }
       });
-
     },
   });
   return wrappedScene;

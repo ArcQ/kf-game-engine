@@ -70,10 +70,10 @@ export function flattenObject(ob) {
 }
 /* eslint-enable */
 
-/** @module **/
-const isEmpty = (v) => v === null || v === undefined;
-const isObj = (v) => (typeof v === 'object');
-const isSafe = (v) => (!isEmpty(v)) && isObj(v);
+/** @module * */
+const isEmpty = v => v === null || v === undefined;
+const isObj = v => (typeof v === 'object');
+const isSafe = v => (!isEmpty(v)) && isObj(v);
 
 /**
  * safeGetIn use this to avoid the need for null checks everywehre, supports immutable maps

@@ -6,9 +6,7 @@ import { getWindow } from './global';
  * dictionary of functions that create a wasm memory object based on the type of argument passed in
  */
 export const MemoryFactory = {
-  inputDef: (inputDef) => {
-    return [1, 100, 200, 200, 200]
-  },
+  inputDef: inputDef => [1, 100, 200, 200, 200],
 };
 
 /**
@@ -21,6 +19,6 @@ export function runOnWasmLoad(cb) {
   if (getWindow(['wasmLoaded'])) {
     _cb();
   } else {
-    getWindow(['addEventListener'])('wasm_load', _cb)
+    getWindow(['addEventListener'])('wasm_load', _cb);
   }
-};
+}

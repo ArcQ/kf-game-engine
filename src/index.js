@@ -1,11 +1,11 @@
 import * as _PIXI from 'pixi.js';
-import {  actions as gameEngineActions, push } from 'utils/store/ducks';
+import { actions as gameEngineActions, push } from 'utils/store/ducks';
 import scaleToWindowPixi from 'scale-to-window-pixi';
+import { getWindow, getDocument, devicePixelRatio } from 'utils/global';
 import _assetManager from './asset-manager';
 import _sceneManager from './scene-manager';
 import utils from './utils';
 
-import { getWindow, getDocument, devicePixelRatio } from 'utils/global';
 
 function getDimensions(aspectRatio, _getWindow) {
   const wWidth = _getWindow().screen.width;
@@ -72,7 +72,7 @@ const engine = {
    *
    */
   start(gameConfig, mainGameViewRef, storeFn, assetDicts) {
-    engine.assetUrl = "https://s3.ca-central-1.amazonaws.com/dev-assets-1/";
+    engine.assetUrl = 'https://s3.ca-central-1.amazonaws.com/dev-assets-1/';
     engine.ui = { ...engine.ui, ...storeFn };
 
     const options = { antialias: false, transparent: true, resolution: devicePixelRatio };

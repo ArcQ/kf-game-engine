@@ -37,7 +37,7 @@ export function load(assetUrl, { assets }) {
     const combinedDicts = combineDicts(notAddedDicts);
     combinedDicts
       .reduce((loader, { dictName, key, assetName }) => ((loadedDicts.indexOf(dictName) === -1)
-        ? loader.add(console.log(`${dictName}_${key}`)||`${dictName}_${key}`, `${assetUrl}${assetName}`)
+        ? loader.add(console.log(`${dictName}_${key}`) || `${dictName}_${key}`, `${assetUrl}${assetName}`)
         : loader),
       PIXI.loader)
     /**
