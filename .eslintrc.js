@@ -3,11 +3,10 @@ const path = require('path');
 module.exports = {
   'parser': 'babel-eslint',
   'extends': [
-    'airbnb'
+    'airbnb-base'
   ],
   'plugins': [
     'babel',
-    'react',
     'promise',
     'jest'
   ],
@@ -32,10 +31,8 @@ module.exports = {
     }
   },
   'rules': {
-    'jsx-quotes': [2, 'prefer-double'],
     'max-len': [1, 100, 2],
     'import/no-named-as-default': 0,
-    'react/jsx-filename-extension': 0,
     'no-param-reassign': ['error', { 'props': false }],
     'no-mixed-operators': 1,
     'no-underscore-dangle': 0,
@@ -48,7 +45,6 @@ module.exports = {
     'react/require-default-props':0,
     'array-callback-return':0,
     'react/destructuring-assignment':0,
-    'react/jsx-closing-tag-location':0,
     'space-before-function-paren':0,
     'import/prefer-default-export':0,
     'implicit-arrow-linebreak':0,
