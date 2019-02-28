@@ -37,7 +37,7 @@ export function load(assetUrl, { assets }) {
     const combinedDicts = combineDicts(notAddedDicts);
     combinedDicts
       .reduce((loader, { dictName, key, assetName }) => ((loadedDicts.indexOf(dictName) === -1)
-        ? loader.add(console.log(`${dictName}_${key}`) || `${dictName}_${key}`, `${assetUrl}${assetName}`)
+        ? loader.add(`${dictName}_${key}`, `${assetUrl}${assetName}`)
         : loader),
       PIXI.loader)
     /**
@@ -49,7 +49,6 @@ export function load(assetUrl, { assets }) {
      */
       .on('progress', loader => observer.next({ percentage: parseInt(loader.progress, 10) }))
       .load(() => {
-        console.log(PIXI.loader.resources);
         loadedDicts = loadedDicts.concat(assets);
         observer.complete();
       });
