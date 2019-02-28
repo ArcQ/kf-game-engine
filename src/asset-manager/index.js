@@ -6,7 +6,7 @@
 import * as PIXI from 'pixi.js';
 import { Observable } from 'rxjs';
 import { difference } from 'ramda';
-import engine from 'game/engine';
+import engine from 'engine';
 
 let loadedDicts = [];
 

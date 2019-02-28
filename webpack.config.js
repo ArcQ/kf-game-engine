@@ -3,7 +3,8 @@ const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   entry: {
-    index: './src/index.js',
+    index: './src/engine.js',
+    encoder: './src/utils/encoder',
     // ['asset-manager']: './src/asset-manager/index.js',
     // ['scene-manager']: './src/scene-manager/index.js'
   },

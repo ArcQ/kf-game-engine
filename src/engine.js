@@ -1,5 +1,6 @@
 import * as _PIXI from 'pixi.js';
-import { actions as gameEngineActions, push } from 'utils/store/ducks';
+import { actions as gameEngineActions } from 'utils/store/ducks';
+import _encoder from 'utils/encoder';
 import scaleToWindowPixi from 'scale-to-window-pixi';
 import { getWindow, getDocument, devicePixelRatio } from 'utils/global';
 import _assetManager from './asset-manager';
@@ -57,8 +58,8 @@ const engine = {
   },
   scale: null,
   ui: {
-    dispatch(action) {},
-    select(key) {},
+    dispatch() {},
+    select() {},
   },
 
   /**
@@ -80,7 +81,7 @@ const engine = {
       gameConfig.aspectRatio.y / gameConfig.aspectRatio.x,
       getWindow,
     );
-    const app = new PIXI.Application(initialDimensions.x, initialDimensions.y, options);
+    const app = new _PIXI.Application(initialDimensions.x, initialDimensions.y, options);
     // scaling
     app.renderer.autoResize = true;
     mainGameViewRef.appendChild(app.view);
@@ -91,7 +92,7 @@ const engine = {
       };
     }
     engine.app = app;
-    engine.ticker = new PIXI.ticker.Ticker();
+    engine.ticker = new _PIXI.ticker.Ticker();
     engine.ticker.start();
     // engine.ticker.stop();
     // engine.ticker.autoStart = true;
@@ -100,6 +101,7 @@ const engine = {
     return engine.app;
   },
   assetManager: _assetManager,
+  encoder: _encoder,
   sceneManager: _sceneManager,
   PIXI: _PIXI,
 };
@@ -109,5 +111,6 @@ engine.utils = utils(engine);
 export const assetManager = _assetManager;
 export const sceneManager = _sceneManager;
 export const PIXI = _PIXI;
+export const encoder = _encoder;
 
 export default engine;

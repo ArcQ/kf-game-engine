@@ -62,19 +62,16 @@
  */
 
 import { Observable, forkJoin, of } from 'rxjs';
-import { mapDOMPosToStage } from 'game/engine/game-loop/render.utils';
 import {
   concat, map, tap, catchError,
 } from 'rxjs/operators';
 import { compose, curry } from 'ramda';
+import createWasmGame from 'wasm-game';
 
-import { load } from 'game/engine/asset-manager';
+import { load } from 'asset-manager';
 import { actions as gameEngineActions } from 'utils/store/ducks';
-import engine from 'game/engine';
+import engine from 'engine';
 import { getWindow } from 'utils/global';
-
-import { runOnWasmLoad } from 'utils/wasm.utils';
-import { ticker, createGameLoop } from '../game-loop';
 
 /**
  * _createLoadObs - creates the observer that first loads the loading scene assets
@@ -143,16 +140,35 @@ function _loadScene(wrappedScene) {
   );
 }
 
-let _cancelPrevGameLoopObs;
-const _cancelPrevGameLoop$ = new Observable((obs) => {
-  _cancelPrevGameLoopObs = obs;
-});
+let prevGameLoop;
 
-function setCljsWasmAdapter(props) {
+/**
+ * setWasmInterface - wasm_bindgen is being initiated in the window, so set
+ * updatefn taht wasm needs to call in a global obj
+ *
+ * @param props
+ * @returns {undefined}
+ */
+function setWasmInterface(props) {
   if (!(getWindow().game_config)) {
     getWindow().game_config = {};
   }
   getWindow().game_config = { ...getWindow().game_config, ...props };
+}
+
+/**
+ * runOnWasmLoad
+ *
+ * whenever you're accessing wasm, should do a safe check f
+ * or whether it exists/isLoaded, else wait for it to load
+ */
+function runOnWasmLoad(cb) {
+  const _cb = () => cb(getWindow(['wasm_bindgen']));
+  if (getWindow(['wasmLoaded'])) {
+    _cb();
+  } else {
+    getWindow(['addEventListener'])('wasm_load', _cb);
+  }
 }
 
 /**
@@ -164,8 +180,7 @@ function setCljsWasmAdapter(props) {
 function _wrapInSceneHelpers(sceneObj) {
   const wrappedScene = Object.assign({}, sceneObj, {
     start() {
-      // emit event ot cancel previous game loop
-      if (_cancelPrevGameLoopObs) _cancelPrevGameLoopObs.next();
+      if (prevGameLoop) prevGameLoop.stop();
       _loadScene(wrappedScene);
     },
     /**
@@ -180,53 +195,32 @@ function _wrapInSceneHelpers(sceneObj) {
 
       runOnWasmLoad((wasmBindgen) => {
         if (sceneObj.update) {
-          const createArrFromBuffer = (buffer) => {
-            const sliced = buffer.slice(0, parseInt(buffer[0], 10));
-            return Array.from(sliced);
-          };
-
-          setCljsWasmAdapter({
-            updateFn: (args) => {
-              const buffer = new Float32Array(wasmBindgen.wasm.memory.buffer, args);
-              compose(
-                sceneObj.update,
-                createArrFromBuffer,
-              )(buffer);
+          window.encoderKeys = sceneObj.encoderKeys;
+          // TODO should load earlier and be the last 10% that gets loaded
+          const {
+            gameLoop,
+            wasmInterface,
+          } = createWasmGame({
+            wasmBindgen,
+            onWasmStateChange: sceneObj.update,
+            fps: 40,
+            wasmConfig: {
+              name: 'LevelOne',
+              encoderKeys: sceneObj.encoderKeys,
+              initConfig,
             },
-            // encode the keys into integers to make passing to rust more efficient
-            mapEventsKeyDict: fn => Object.keys(getWindow().game_config.eventsKeyDict).map((v, i) => fn(v, i)),
           });
 
-          window.encoderKeys = sceneObj.encoderKeys;
-          // should load earlier and be the last 10% that gets loaded
-          const wasmGame = new wasmBindgen.LevelOne(sceneObj.encoderKeys, initConfig);
-          const updateFn = dt => wasmGame.get_update(dt);
-          const wasmUpdate = a => wasmGame.on_event(a);
 
-          engine.wasmUpdate = wasmUpdate;
-          // wait on mount of ui elements
+          setWasmInterface(wasmInterface.fromWasm);
+
+          gameLoop.start();
+
+          engine.wasmUpdate = wasmInterface.toWasm.update;
+          engine.wasmReset = wasmInterface.toWasm.reset;
+          // TODO wait on mount of ui elements
           if (sceneObj.start) setTimeout(() => sceneObj.start(), 500);
-
-          // engine.ticker.add(updateFn);
-          let lastTime;
-          const fps = 40;
-          function tick(curTime) {
-            setTimeout(() => {
-              const dt = curTime - lastTime;
-              requestAnimationFrame(tick);
-              updateFn(dt / 1000);
-              lastTime = curTime;
-            }, 1000 / fps);
-          }
-
-          tick(0.1);
-
-          setTimeout(() => wasmGame.reset(), 5000);
-
-          // engine.stopTicker = () => {
-          //   engine.ticker.remove(updateFn)
-          //   engine.ticker.stop();
-          // };
+          prevGameLoop = gameLoop;
         }
       });
     },
@@ -238,7 +232,6 @@ function _wrapInSceneHelpers(sceneObj) {
 const sceneManager = {
   sceneDict: undefined,
   assetUrl: undefined,
-  storeFn: undefined,
   /**
    * starts the scene manager with a default scene as specified in the config
    *
@@ -248,7 +241,7 @@ const sceneManager = {
    * @returns {undefined}
    *
    */
-  start(config, sceneDict, storeFn) {
+  start(config, sceneDict) {
     sceneManager.assetUrl = config.assetUrl;
     sceneManager.sceneDict = sceneDict;
     sceneManager.pushScene(config.defaultScene);
