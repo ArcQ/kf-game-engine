@@ -5,6 +5,7 @@ module.exports = {
   entry: {
     index: './src/engine.js',
     encoder: './src/utils/encoder',
+    ['wasm-game']: './src/wasm-game/index.js',
     // ['asset-manager']: './src/asset-manager/index.js',
     // ['scene-manager']: './src/scene-manager/index.js'
   },

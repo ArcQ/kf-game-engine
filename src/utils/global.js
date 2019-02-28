@@ -2,21 +2,46 @@
 
 import { safeGetIn } from './dictUtils';
 
-const _window = window;
-const _document = document;
-const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !_window.MSStream;
+export const canUseDOM = () => !!(
+  typeof window !== 'undefined'
+  && window.document
+  && window.document.createElement
+);
 
-export const getWindow = attrs => (attrs ? safeGetIn(window, attrs) : window);
-export const getDocument = () => document;
+export const getWindow = (attrs) => {
+  if (canUseDOM()) {
+    return (attrs ? safeGetIn(window, attrs) : window);
+  }
+  return undefined;
+};
 
-export const getWWidth = () => ((iOS) ? _window.screen.width : _window.innerWidth
-  || _document._documentElement.clientWidth
-  || _document.body.clientWidth);
+export const getDocument = () => {
+  if (canUseDOM()) {
+    return document;
+  }
+  return undefined;
+};
 
-export const getWHeight = () => ((iOS) ? _window.screen.height : _window.innerHeight
-  || _document._documentElement.clientHeight
-  || _document.body.clientHeight);
+export const getNavigator = () => {
+  if (canUseDOM()) {
+    return navigator;
+  }
+  return undefined;
+};
+
+const iOS = () =>
+  (canUseDOM()
+    ? /iPad|iPhone|iPod/.test(getNavigator().userAgent) && !getWindow().MSStream
+    : undefined);
+
+export const getWWidth = () => ((iOS) ? getWindow().screen.width : getWindow().innerWidth
+  || getDocument()._documentElement.clientWidth
+  || getDocument().body.clientWidth);
+
+export const getWHeight = () => ((iOS) ? getWindow().screen.height : getWindow().innerHeight
+  || getDocument()._documentElement.clientHeight
+  || getDocument().body.clientHeight);
 
 export const getWDimensions = () => ({ wWidth: getWWidth(), wHeight: getWHeight() });
 
-export const { devicePixelRatio } = _window;
+export const devicePixelRatio = () => getWindow() && getWindow().devicePixelRatio ;

@@ -2,32 +2,34 @@ import { compose } from 'ramda';
 import { getWindow } from 'utils/global';
 
 function _requestAnimationFrame(fn) {
-  if (!getWindow()) {
-    setTimeout(fn, 0);
-  } else {
+  if (getWindow()) {
     requestAnimationFrame(fn);
+  } else {
+    fn();
   }
 }
 
-function createWasmInterface(wasmBindgen, update) {
-  const createArrFromBuffer = (buffer) => {
-    const sliced = buffer.slice(1, parseInt(buffer[0], 10));
-    return Array.from(sliced);
-  };
+export function createArrFromBuffer(buffer) {
+  const sliced = buffer.slice(1, parseInt(buffer[0], 10));
+  return Array.from(sliced);
+};
 
+function createWasmInterface({ wasm, wasmBindgen, onWasmStateChange }) {
   return {
-    updateFn: (args) => {
-      const buffer = new Float32Array(wasmBindgen.wasm.memory.buffer, args);
+    update: (args) => {
+      const buffer = getWindow()
+        ? new Float32Array(wasmBindgen.wasm.memory.buffer, args)
+        : new Float32Array(wasm.memory.buffer, args);
       _requestAnimationFrame(() =>
         compose(
-          update,
+          onWasmStateChange,
           createArrFromBuffer,
         )(buffer));
     },
   };
 }
 
-function startGameLoop(fps, updateFn) {
+function startGameLoop(fps, onTick) {
   const config = {
     running: true,
     stop: () => { config.running = false; },
@@ -37,11 +39,11 @@ function startGameLoop(fps, updateFn) {
     setTimeout(() => {
       if (!config.running) return;
       const dt = curTime - lastTime;
-      updateFn(dt / 1000);
+      onTick(dt / 1000);
       _requestAnimationFrame(tick);
       lastTime = curTime;
     }, 1000 / fps);
-  };
+  }
 
   tick(0);
   return config;
@@ -51,10 +53,10 @@ export default function createWasmGame({
   wasmBindgen,
   fps = 40,
   wasmConfig,
+  wasm,
   onWasmStateChange,
 }) {
   let config;
-
   const wasmGame = new wasmBindgen[wasmConfig.name](wasmConfig.encoderKeys, wasmConfig.initConfig);
   const onTick = dt => wasmGame.get_update(dt);
 
@@ -66,10 +68,11 @@ export default function createWasmGame({
       stop: () => config && config.stop(),
     },
     wasmInterface: {
-      fromWasm: createWasmInterface(wasmBindgen, onWasmStateChange),
+      fromWasm: createWasmInterface({ wasmBindgen, onWasmStateChange, wasm }),
       toWasm: {
+        onTick: dt => wasmGame.get_update(dt),
         reset: wasmGame.reset,
-        update: a => wasmGame.on_event(a),
+        onEvent: a => wasmGame.on_event(a),
       },
     },
   };

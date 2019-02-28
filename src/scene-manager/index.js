@@ -202,13 +202,13 @@ function _wrapInSceneHelpers(sceneObj) {
             wasmInterface,
           } = createWasmGame({
             wasmBindgen,
-            onWasmStateChange: sceneObj.update,
             fps: 40,
             wasmConfig: {
               name: 'LevelOne',
               encoderKeys: sceneObj.encoderKeys,
               initConfig,
             },
+            onWasmStateChange: sceneObj.update,
           });
 
 
@@ -216,8 +216,8 @@ function _wrapInSceneHelpers(sceneObj) {
 
           gameLoop.start();
 
-          engine.wasmUpdate = wasmInterface.toWasm.update;
-          engine.wasmReset = wasmInterface.toWasm.reset;
+          engine.onEvent = wasmInterface.toWasm.onEvent;
+          engine.resetWasm = wasmInterface.toWasm.reset;
           // TODO wait on mount of ui elements
           if (sceneObj.start) setTimeout(() => sceneObj.start(), 500);
           prevGameLoop = gameLoop;

@@ -76,7 +76,7 @@ const engine = {
     engine.assetUrl = 'https://s3.ca-central-1.amazonaws.com/dev-assets-1/';
     engine.ui = { ...engine.ui, ...storeFn };
 
-    const options = { antialias: false, transparent: true, resolution: devicePixelRatio };
+    const options = { antialias: false, transparent: true, resolution: devicePixelRatio() };
     const initialDimensions = getDimensions(
       gameConfig.aspectRatio.y / gameConfig.aspectRatio.x,
       getWindow,
