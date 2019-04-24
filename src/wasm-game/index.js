@@ -12,7 +12,7 @@ function _requestAnimationFrame(fn) {
 export function createArrFromBuffer(buffer) {
   const sliced = buffer.slice(1, parseInt(buffer[0], 10));
   return Array.from(sliced);
-};
+}
 
 function createWasmInterface({ wasm, wasmBindgen, onWasmStateChange }) {
   return {
@@ -43,7 +43,7 @@ function startGameLoop(fps, onTick) {
       _requestAnimationFrame(tick);
       lastTime = curTime;
     }, 1000 / fps);
-  }
+  };
 
   tick(0);
   return config;
