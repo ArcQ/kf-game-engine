@@ -10,7 +10,8 @@
     "build:es6": "rm -rf build && babel src/index.js -d build && yarn build:assetManager && yarn build:sceneManager && yarn build:utils",
     "build": "rm -rf build && babel src --out-dir build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "start": "webpack --watch"
   },
   "author": "",
   "license": "ISC",
