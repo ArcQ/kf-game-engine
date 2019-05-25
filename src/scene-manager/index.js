@@ -20,7 +20,8 @@
  *   eventSources: [function (cbWrapper) {
           document.getElementById('mainGameContainer').addEventListener("click", (event) =>
             cbWrapper(
-              // cbWrapper expects a function that returns and array of u32 that we will pass to rust through on_update
+              // cbWrapper expects a function that returns and array of
+              // u32 that we will pass to rust through on_update
               () => mapDOMPosToStage([event.offsetX, event.offsetY]),
             ),
           )), false);
@@ -61,17 +62,17 @@
  * @property {function=} [willLoad] - to be called right before load assets
  */
 
-import { Observable, forkJoin, of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import {
   concat, map, tap, catchError,
 } from 'rxjs/operators';
-import { compose, curry } from 'ramda';
-import createWasmGame from 'wasm-game';
+import { curry, mergeDeepRight } from 'ramda';
+import createWasmGame, { runOnWasmLoad } from 'wasm-game';
 
 import { load } from 'asset-manager';
 import { actions as gameEngineActions } from 'utils/store/ducks';
 import engine from 'engine';
-import { getWindow } from 'utils/global';
+import flatten from 'flat';
 
 /**
  * _createLoadObs - creates the observer that first loads the loading scene assets
@@ -83,9 +84,9 @@ import { getWindow } from 'utils/global';
  * @param assetUrl
  * @returns {Observable}
  */
-function _createLoadObs(wrappedScene) {
+function _createLoadObs(wrappedScene, assetUrl) {
   const loadingSceneObj = wrappedScene.loading();
-  const loadFromAssetUrl = curry(load)(sceneManager.assetUrl);
+  const loadFromAssetUrl = curry(load)(assetUrl);
   const loadLoadingAssets$ = loadFromAssetUrl(loadingSceneObj);
   const loadSceneAssets$ = loadFromAssetUrl(wrappedScene);
   const sceneCustomLoad$ = wrappedScene.load$ || of(false);
@@ -123,19 +124,19 @@ function _createLoadObs(wrappedScene) {
  * this takes the scene object and loads all assets defined inside of assets attribute
  *
  * @private
- * @param sceneObj
  * @param wrappedScene
+ * @param assetUrl
  * @returns {undefined}
  */
-function _loadScene(wrappedScene) {
-  const loadScene$ = _createLoadObs(wrappedScene);
+function _loadScene(wrappedScene, assetUrl) {
+  const loadScene$ = _createLoadObs(wrappedScene, assetUrl);
   const obs$ = (wrappedScene.willLoad)
     ? forkJoin(wrappedScene.willLoad(), loadScene$) : loadScene$;
 
   obs$.subscribe(
-    ([initConfig]) => { //eslint-disable-line
+    ([asyncConfig]) => { //eslint-disable-line
       engine.ui.dispatch(gameEngineActions.pushLocation({ path: wrappedScene.uiRoute }));
-      wrappedScene.onFinishLoad(initConfig);
+      wrappedScene.onFinishLoad(asyncConfig);
     },
   );
 }
@@ -143,57 +144,24 @@ function _loadScene(wrappedScene) {
 let prevGameLoop;
 
 /**
- * setWasmInterface - wasm_bindgen is being initiated in the window, so set
- * updatefn taht wasm needs to call in a global obj
- *
- * @param props
- * @returns {undefined}
- */
-function setWasmInterface(props) {
-  if (!(getWindow().game_config)) {
-    getWindow().game_config = {};
-  }
-  getWindow().game_config = { ...getWindow().game_config, ...props };
-}
-
-/**
- * runOnWasmLoad
- *
- * whenever you're accessing wasm, should do a safe check f
- * or whether it exists/isLoaded, else wait for it to load
- */
-function runOnWasmLoad(cb) {
-  const _cb = () => cb(getWindow(['wasm_bindgen']));
-  if (getWindow(['wasmLoaded'])) {
-    _cb();
-  } else {
-    getWindow(['addEventListener'])('wasm_load', _cb);
-  }
-}
-
-/**
  * _wrapInSceneHelpers - wraps a scene with the helper methods so it connects with _loadScene
  *
  * @param sceneObj
  * @returns {SceneDef}
  */
-function _wrapInSceneHelpers(sceneObj) {
+function _wrapInSceneHelpers(sceneObj, assetUrl) {
   const wrappedScene = Object.assign({}, sceneObj, {
     start() {
       if (prevGameLoop) prevGameLoop.stop();
-      _loadScene(wrappedScene);
+      _loadScene(wrappedScene, assetUrl);
     },
     /**
      * onFinishLoad - launches scene def methods and should also launch ui
      * @param sceneCustomRes - response form custom load$ observable supplied in scene def
      * @returns {undefined}
      */
-    onFinishLoad(initConfig) {
-      const initialState = (sceneObj.onFinishLoad)
-        ? sceneObj.onFinishLoad(engine.app.stage)
-        : {};
-
-      runOnWasmLoad((wasmBindgen) => {
+    onFinishLoad(asyncConfig) {
+      runOnWasmLoad((wasm, wasmBindgen) => {
         if (sceneObj.update) {
           window.encoderKeys = sceneObj.encoderKeys;
           // TODO should load earlier and be the last 10% that gets loaded
@@ -201,18 +169,16 @@ function _wrapInSceneHelpers(sceneObj) {
             gameLoop,
             wasmInterface,
           } = createWasmGame({
+            wasm,
             wasmBindgen,
             fps: 40,
             wasmConfig: {
               name: 'LevelOne',
               encoderKeys: sceneObj.encoderKeys,
-              initConfig,
+              initConfig: flatten(mergeDeepRight(sceneObj.initConfig, asyncConfig), { safe: true }),
             },
             onWasmStateChange: sceneObj.update,
           });
-
-
-          setWasmInterface(wasmInterface.fromWasm);
 
           gameLoop.start();
 
@@ -256,7 +222,7 @@ const sceneManager = {
    */
   pushScene(sceneKey) {
     const sceneObj = sceneManager.sceneDict[sceneKey]();
-    const scene = _wrapInSceneHelpers(sceneObj);
+    const scene = _wrapInSceneHelpers(sceneObj, sceneManager.assetUrl);
     scene.start(engine.app.stage);
   },
 };

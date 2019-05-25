@@ -14,12 +14,10 @@ export function createArrFromBuffer(buffer) {
   return Array.from(sliced);
 }
 
-function createWasmInterface({ wasm, wasmBindgen, onWasmStateChange }) {
+function createWasmInterface({ wasm, onWasmStateChange }) {
   return {
     update: (args) => {
-      const buffer = getWindow()
-        ? new Float32Array(wasmBindgen.wasm.memory.buffer, args)
-        : new Float32Array(wasm.memory.buffer, args);
+      const buffer = new Float32Array(wasm.memory.buffer, args);
       _requestAnimationFrame(() =>
         compose(
           onWasmStateChange,
@@ -49,6 +47,36 @@ function startGameLoop(fps, onTick) {
   return config;
 }
 
+/*
+ * setWasmInterface - wasm_bindgen is being initiated in the window, so set
+ * updatefn taht wasm needs to call in a global obj
+ *
+ * @param props
+ * @returns {undefined}
+ */
+export function setWasmInterface(props) {
+  if (!(getWindow().game_config)) {
+    getWindow().game_config = {};
+  }
+  getWindow().game_config = { ...getWindow().game_config, ...props };
+}
+
+/**
+ * runOnWasmLoad
+ *
+ * whenever you're accessing wasm, should do a safe check f
+ * or whether it exists/isLoaded, else wait for it to load
+ */
+export function runOnWasmLoad(cb) {
+  const _cb = () => cb(getWindow(['wasm']), getWindow(['wasm_bindgen']));
+  if (getWindow(['wasmLoaded'])) {
+    _cb();
+  } else {
+    getWindow(['addEventListener'])('wasm_load', _cb);
+  }
+}
+
+
 export default function createWasmGame({
   wasmBindgen,
   fps = 40,
@@ -68,7 +96,10 @@ export default function createWasmGame({
       stop: () => config && config.stop(),
     },
     wasmInterface: {
-      fromWasm: createWasmInterface({ wasmBindgen, onWasmStateChange, wasm }),
+      fromWasm: compose(
+        setWasmInterface,
+        createWasmInterface,
+      )({ onWasmStateChange, wasm }),
       toWasm: {
         onTick: dt => wasmGame.get_update(dt),
         reset: wasmGame.reset,
