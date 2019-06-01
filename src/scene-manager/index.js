@@ -70,7 +70,7 @@ import { curry, mergeDeepRight } from 'ramda';
 import createWasmGame, { runOnWasmLoad } from 'wasm-game';
 
 import { load } from 'asset-manager';
-import { actions as gameEngineActions } from 'utils/store/ducks';
+import { actions as gameEngineActions } from 'store/ducks';
 import engine from 'engine';
 import flatten from 'flat';
 

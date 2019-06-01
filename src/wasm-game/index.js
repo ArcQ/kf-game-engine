@@ -86,6 +86,7 @@ export default function createWasmGame({
 }) {
   let config;
   const wasmGame = new wasmBindgen[wasmConfig.name](wasmConfig.encoderKeys, wasmConfig.initConfig);
+  console.log(wasmConfig.initConfig);
   const onTick = dt => wasmGame.get_update(dt);
 
   return {

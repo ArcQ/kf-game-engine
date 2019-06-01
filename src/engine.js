@@ -1,5 +1,5 @@
 import * as _PIXI from 'pixi.js';
-import { actions as gameEngineActions } from 'utils/store/ducks';
+import { actions as gameEngineActions } from 'store/ducks';
 import _encoder from 'utils/encoder';
 import scaleToWindowPixi from 'scale-to-window-pixi';
 import { getWindow, getDocument, devicePixelRatio } from 'utils/global';
