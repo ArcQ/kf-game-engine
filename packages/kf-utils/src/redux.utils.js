@@ -4,7 +4,6 @@ import constants from 'namespace-constants';
 
 const separator = '-';
 
-
 function convertArrToObj(arr) {
   return Object.assign(...arr.map(key => ({ [key]: payload => ({ payload }) })));
 }

@@ -1,12 +1,10 @@
 import * as _PIXI from 'pixi.js';
 import { actions as gameEngineActions } from 'store/ducks';
-import _encoder from 'utils/encoder';
 import scaleToWindowPixi from 'scale-to-window-pixi';
-import { getWindow, getDocument, devicePixelRatio } from 'utils/global';
-import _assetManager from './asset-manager';
-import _sceneManager from './scene-manager';
-import utils from './utils';
-
+import { getWindow, getDocument, devicePixelRatio } from 'utils/render/global';
+import assetManager from './asset-manager';
+import sceneManager from './scene-manager';
+import helperMethods from './helper-methods';
 
 function getDimensions(aspectRatio, _getWindow) {
   const wWidth = _getWindow().screen.width;
@@ -98,19 +96,14 @@ const engine = {
     // engine.ticker.autoStart = true;
     engine.ui.dispatch(gameEngineActions.pushLocation({ path: '/' }));
     engine.assetDicts = assetDicts;
+    engine.sceneManager = sceneManager(engine);
+    engine.assetManager = assetManager(engine);
     return engine.app;
   },
-  assetManager: _assetManager,
-  encoder: _encoder,
-  sceneManager: _sceneManager,
-  PIXI: _PIXI,
 };
 
-engine.utils = utils(engine);
+engine.helpers = helperMethods(engine);
 
-export const assetManager = _assetManager;
-export const sceneManager = _sceneManager;
 export const PIXI = _PIXI;
-export const encoder = _encoder;
 
 export default engine;

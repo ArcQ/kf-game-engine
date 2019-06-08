@@ -1,5 +1,5 @@
 import { compose } from 'ramda';
-import { getWindow } from 'utils/global';
+import { getWindow } from 'utils/render/global';
 
 function _requestAnimationFrame(fn) {
   if (getWindow()) {

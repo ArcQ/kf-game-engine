@@ -23,9 +23,10 @@ module.exports = {
     'import/resolver': {
       'node':{
         'moduleDirectory': [
-          path.resolve('src'),
+          path.resolve('packages/kf-game-engine/src'),
+          path.resolve('packages/kf-utils/src'),
+          path.resolve('packages/kf-game-engine/node_modules'),
           path.resolve('node_modules'),
-          path.resolve('lib'),
         ]
       }
     }

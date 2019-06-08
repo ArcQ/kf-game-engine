@@ -1,6 +1,6 @@
 // abstract away uses of window in case of ssr
 
-import { safeGetIn } from './dictUtils';
+import { path } from 'ramda';
 
 export const canUseDOM = () => !!(
   typeof window !== 'undefined'
@@ -10,7 +10,7 @@ export const canUseDOM = () => !!(
 
 export const getWindow = (attrs) => {
   if (canUseDOM()) {
-    return (attrs ? safeGetIn(window, attrs) : window);
+    return (attrs ? path(attrs, window) : window);
   }
   return undefined;
 };
@@ -44,4 +44,4 @@ export const getWHeight = () => ((iOS) ? getWindow().screen.height : getWindow()
 
 export const getWDimensions = () => ({ wWidth: getWWidth(), wHeight: getWHeight() });
 
-export const devicePixelRatio = () => getWindow() && getWindow().devicePixelRatio ;
+export const devicePixelRatio = () => getWindow() && getWindow().devicePixelRatio;

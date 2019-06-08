@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import { getSpriteSheetFrames } from 'asset-manager';
 
 export const ANCHOR_MID = 'm';
 export const ANCHOR_TR = 'tm';
@@ -18,6 +17,23 @@ const handleAnchor = {
     pos[1] + BUFFER - (sprite.height / 2),
   ],
 };
+
+/**
+ * getSprite from cached assets
+ *
+ * @param {string} dictName - the string key referencing the json dict as defined in assets/index.js
+ * @param {string} key - the key defined in the json dict
+ * @returns {PIXI.sprite}
+ */
+export function getSprite(dictName, key) {
+  return new PIXI.Sprite(
+    PIXI.loader.resources[`${dictName}_${key}`].texture,
+  );
+}
+
+export function getSpriteSheetFrames(dictName, k, animK) {
+  return PIXI.loader.resources[`${dictName}_${k}`].spritesheet.animations[animK];
+}
 
 /**
  * setPos - set position of sprite (mutates original sprite)
