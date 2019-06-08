@@ -68,7 +68,7 @@ import {
   concat, map, tap, catchError,
 } from 'rxjs/operators';
 import { curry, mergeDeepRight } from 'ramda';
-import createWasmGame, { runOnWasmLoad } from 'engine/wasm-game';
+import createWasmGame, { runOnWasmLoad } from 'wasm-game';
 
 import { actions as gameEngineActions } from 'store/ducks';
 import flatten from 'flat';

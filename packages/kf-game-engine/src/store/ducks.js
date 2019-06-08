@@ -1,4 +1,4 @@
-import createHelpers from 'utils/redux.utils.js';
+import createHelpers from 'kf-utils/dist/redux.utils';
 
 const namespace = 'GAME-ENGINE';
 const { createConstantsAndActions } = createHelpers(namespace);

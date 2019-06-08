@@ -25,6 +25,7 @@ module.exports = {
         'moduleDirectory': [
           path.resolve('packages/kf-game-engine/src'),
           path.resolve('packages/kf-utils/src'),
+          path.resolve('packages/kf-utils/node_modules'),
           path.resolve('packages/kf-game-engine/node_modules'),
           path.resolve('node_modules'),
         ]
