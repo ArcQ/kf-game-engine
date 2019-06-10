@@ -14,16 +14,13 @@ export function createArrFromBuffer(buffer) {
   return Array.from(sliced);
 }
 
-function createWasmInterface({ wasm, onWasmStateChange }) {
+function createWasmInterface({ onWasmStateChange }) {
   return {
-    update: (args) => {
-      const buffer = new Float32Array(wasm.memory.buffer, args);
-      _requestAnimationFrame(() =>
-        compose(
-          onWasmStateChange,
-          createArrFromBuffer,
-        )(buffer));
-    },
+    update: args => _requestAnimationFrame(() =>
+      compose(
+        onWasmStateChange,
+        createArrFromBuffer,
+      )(args)),
   };
 }
 

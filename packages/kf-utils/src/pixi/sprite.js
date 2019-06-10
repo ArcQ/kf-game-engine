@@ -1,4 +1,10 @@
 import * as PIXI from 'pixi.js';
+import {
+  pipe,
+  values,
+  map,
+  flatten,
+} from 'ramda';
 
 export const ANCHOR_MID = 'm';
 export const ANCHOR_TR = 'tm';
@@ -64,19 +70,84 @@ function createSpriteForChar(spriteSheetArgs, pos) {
 }
 
 /**
+ * createAnimsForChar note should document defaults
+ *
+ * @param anims
+ * @returns {undefined}
+ */
+function createAnimsForChar(engine, anims) {
+  const defaultAnims = {
+    spriteHandler: (sprite) => {
+      sprite.loop = true;
+    },
+  };
+  return map(
+    v => (Array.isArray(v)
+      ? { ...defaultAnims, frames: () => getSpriteSheetFrames(...v) }
+      : { ...defaultAnims, ...v }),
+    anims,
+  );
+}
+
+/**
  * charFactory - returns function that creates a character type object
  * that has initial state and sprite
  *
  * @param {spriteSheetArgs}
  * @returns {function} returns a functions that takes instance arguments as an object
  */
-export function createCharFactory({ spriteSheetArgs }) {
-  return ({ pos }) => {
-    const sprite = createSpriteForChar(spriteSheetArgs, pos);
-    return {
-      initialState: { sprite: '', pos },
-      sprite,
-      spriteK: [spriteSheetArgs[2]],
-    };
+function createCharFactory(engine, { spriteSheetArgs, ...charArgs }, initialState) {
+  const sprite = createSpriteForChar(spriteSheetArgs, initialState.pos);
+  const anims = (charArgs.anims) && createAnimsForChar(engine, charArgs.anims);
+  const { charK, ...state } = initialState;
+  return {
+    state,
+    sprite,
+    anims,
+    charArgs,
+    charK,
   };
+}
+
+/**
+ * createCharEntities
+ *
+ * @param config {Object} object with character keys and position as and attribute
+ * @returns {Object} character object
+ */
+export function createCharEntities(engine, config, charFactoryDict) {
+  const getCharK = v => v.charK;
+  return Object.entries(config).reduce((acc, [k, initialStateObj]) =>
+    ({
+      ...acc,
+      [k]: pipe(
+        getCharK,
+        charK => charFactoryDict[charK],
+        charFactoryArgs => createCharFactory(engine, charFactoryArgs, initialStateObj),
+      )(initialStateObj),
+    }), {});
+}
+
+
+/**
+ * getSpritesFromCharEntities
+ * @param charEntities {Array[charEntity]} an array of entity objects {}
+ *
+ * @returns {undefined}
+ */
+export const getSpritesFromCharEntities = pipe(
+  values,
+  map(v => v.sprite),
+);
+
+/**
+ *  addAllToStage - curied function (engine) => (sprites)
+ *  @param sprites {Array[Sprite]} add an array of sprite to stage
+ * @returns {undefined}
+ */
+export function addAllToStage(engine, args) {
+  return pipe(
+    flatten,
+    map(s => engine.app.stage.addChild(s)),
+  )(args);
 }
