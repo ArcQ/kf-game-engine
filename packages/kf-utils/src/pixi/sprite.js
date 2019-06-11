@@ -57,12 +57,12 @@ export function setPos({ sprite, pos, anchor }) {
   sprite.position.y = spritePos[1]; //eslint-disable-line
 }
 
-function createSpriteForChar(spriteSheetArgs, pos) {
+function createSpriteForChar({ spriteSheetArgs, pos, anchor }) {
   const frames = getSpriteSheetFrames(...spriteSheetArgs);
   const anim = new PIXI.extras.AnimatedSprite(frames);
-  setPos({ sprite: anim, pos });
   anim.height = 100;
   anim.width = 100;
+  setPos({ sprite: anim, pos, anchor: anchor || ANCHOR_BM });
   anim.anchor.set(0.5);
   anim.animationSpeed = 0.3;
   anim.play();
@@ -96,8 +96,8 @@ function createAnimsForChar(engine, anims) {
  * @param {spriteSheetArgs}
  * @returns {function} returns a functions that takes instance arguments as an object
  */
-function createCharFactory(engine, { spriteSheetArgs, ...charArgs }, initialState) {
-  const sprite = createSpriteForChar(spriteSheetArgs, initialState.pos);
+function createCharFactory(engine, charArgs, initialState) {
+  const sprite = createSpriteForChar({ ...charArgs, ...initialState });
   const anims = (charArgs.anims) && createAnimsForChar(engine, charArgs.anims);
   const { charK, ...state } = initialState;
   return {
