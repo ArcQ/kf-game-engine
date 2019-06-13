@@ -74,11 +74,15 @@ export function runOnWasmLoad(cb) {
 }
 
 
+/**
+ * createWasmGame
+ *
+ * @returns GameInterface {gameLoop, wasmInterface}
+ */
 export default function createWasmGame({
   wasmBindgen,
   fps = 40,
   wasmConfig,
-  wasm,
   onWasmStateChange,
 }) {
   let config;
@@ -97,7 +101,7 @@ export default function createWasmGame({
       fromWasm: compose(
         setWasmInterface,
         createWasmInterface,
-      )({ onWasmStateChange, wasm }),
+      )({ onWasmStateChange }),
       toWasm: {
         onTick: dt => wasmGame.get_update(dt),
         reset: wasmGame.reset,

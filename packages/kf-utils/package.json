@@ -6,5 +6,7 @@
   "dependencies": {
     "namespace-constants": "^0.5.0",
     "redux-actions": "^2.6.4"
+  },
+  "devDependencies": {
   }
 }

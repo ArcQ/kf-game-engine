@@ -2,9 +2,11 @@
   "name": "kf-game-engine",
   "version": "1.0.0",
   "description": "",
+  "private": true,
   "main": "es/engine/index.js",
   "scripts": {
-    "build": "lerna exec --parallel 'babel src --root-mode upward --out-dir dist --delete-dir-on-start --no-comments'",
+    "build": "lerna exec --parallel 'babel src --config babel.web.config.js --root-mode upward --out-dir dist --delete-dir-on-start --no-comments'",
+    "start": "nodemon --ignore **/dist --ext js --exec yarn build",
     "build:prod": "BABEL_ENV=production yarn build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --ignore-path .gitignore ./packages"

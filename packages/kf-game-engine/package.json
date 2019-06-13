@@ -4,8 +4,11 @@
   "main": "./dist/index.js",
   "license": "MIT",
   "dependencies": {
+    "flat": "^4.1.0",
     "kf-utils": "^0.0.0",
-    "scale-to-window-pixi": "^1.2.0",
-    "flat": "^4.1.0"
+    "scale-to-window-pixi": "^1.2.0"
+  },
+  "devDependencies": {
+    "@babel/node": "^7.4.5"
   }
 }
