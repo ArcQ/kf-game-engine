@@ -46,16 +46,17 @@ function startGameLoop(fps, onTick) {
 
 /*
  * setWasmInterface - wasm_bindgen is being initiated in the window, so set
- * updatefn taht wasm needs to call in a global obj
+ * updatefn taht wasm needs to call in a global obj, function is initiated by passing
+ * in a global override in case it is called in nodejs
  *
  * @param props
  * @returns {undefined}
  */
-export function setWasmInterface(props) {
-  if (!(getWindow().game_config)) {
-    getWindow().game_config = {};
-  }
-  getWindow().game_config = { ...getWindow().game_config, ...props };
+export function setWasmInterface(globalOverride) {
+  return (props) => {
+    const g = globalOverride || getWindow();
+    g.js_wasm_adapter = { ...props };
+  };
 }
 
 /**
@@ -75,7 +76,8 @@ export function runOnWasmLoad(cb) {
 
 
 /**
- * createWasmGame
+ * createWasmGame - only should be direclty called in node,
+ * in the actual client app, you should use scene-manager to invoke this
  *
  * @returns GameInterface {gameLoop, wasmInterface}
  */
@@ -84,9 +86,16 @@ export default function createWasmGame({
   fps = 40,
   wasmConfig,
   onWasmStateChange,
+  globalOverride,
 }) {
   let config;
-  console.log(wasmConfig);
+
+  const setUpEventListener = compose(
+    setWasmInterface(globalOverride),
+    createWasmInterface,
+  );
+  setUpEventListener({ onWasmStateChange });
+
   const wasmGame = new wasmBindgen[wasmConfig.name](wasmConfig.encoderKeys, wasmConfig.initConfig);
   const onTick = dt => wasmGame.get_update(dt);
 
@@ -98,10 +107,6 @@ export default function createWasmGame({
       stop: () => config && config.stop(),
     },
     wasmInterface: {
-      fromWasm: compose(
-        setWasmInterface,
-        createWasmInterface,
-      )({ onWasmStateChange }),
       toWasm: {
         onTick: dt => wasmGame.get_update(dt),
         reset: wasmGame.reset,

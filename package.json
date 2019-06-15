@@ -1,6 +1,6 @@
 {
   "name": "kf-game-engine",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "private": true,
   "main": "es/engine/index.js",
