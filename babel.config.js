@@ -17,5 +17,12 @@ module.exports = function (api) {
       '@babel/plugin-transform-regenerator',
       '@babel/plugin-transform-async-to-generator',
     ],
+    env: {
+      test: {
+        plugins: [
+          '@babel/plugin-transform-modules-commonjs',
+        ],
+      },
+    },
   };
 };

@@ -2,3 +2,4 @@ node_modules
 dist
 es
 .DS_STORE
+.vscode

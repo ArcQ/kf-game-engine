@@ -5,10 +5,15 @@
   "private": true,
   "main": "es/engine/index.js",
   "scripts": {
-    "build": "lerna exec --parallel 'babel src --config babel.web.config.js --root-mode upward --out-dir dist --delete-dir-on-start --no-comments'",
-    "start": "nodemon --ignore **/dist --ext js --exec yarn build",
+    "build:js": "lerna exec --parallel --ignore bs- 'babel src --config babel.web.config.js --root-mode upward --out-dir dist --delete-dir-on-start --no-comments'",
+    "build:bs": "lerna exec --parallel --scope bs-* 'yarn build'",
+    "build": "yarn build:bs & yarn build:js",
+    "start:js": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:bs'",
+    "start:bs": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:js'",
+    "start": "nodemon --ignore **/dist/** --ext js --exec 'yarn build'",
+    
     "build:prod": "BABEL_ENV=production yarn build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint --ignore-path .gitignore ./packages"
   },
   "workspaces": ["packages/*"],
@@ -21,6 +26,7 @@
     "rxjs": "6"
   },
   "devDependencies": {
+    "@glennsl/bs-jest": "^0.4.8",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -44,5 +50,15 @@
     "eslint-plugin-jest": "^22.3.0",
     "eslint-plugin-promise": "^3.8.0",
     "lerna": "^3.14.1"
+  },
+  "jest": {
+    "testURL": "http://localhost/",
+    "transform": {
+      "lib/es6/*": "./babel-jest-wrapper.js"
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!@glennsl/bs-jest|bs-platform).+\\.js$"
+    ],
+    "verbose": true
   }
 }

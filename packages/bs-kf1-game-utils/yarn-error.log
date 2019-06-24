@@ -1,0 +1,64 @@
+Arguments: 
+  /Users/eddielaw/.nvm/versions/node/v11.15.0/bin/node /usr/local/Cellar/yarn/1.15.2/libexec/bin/yarn.js test
+
+PATH: 
+  /Users/eddielaw/.nvm/versions/node/v11.15.0/bin:/Users/eddielaw/Development/scripts/racer/target/release:/Users/eddielaw/node_modules/.bin//Users/eddielaw/.yarn/bin:/Users/eddielaw/.config/yarn/global/node_modules/.bin:/Users/eddielaw/Library/Python/3.7/bin:/Users/eddielaw/Development/scripts/bin/flutter/bin/:/Users/eddielaw/Development/scripts/bin/:/usr/local/Cellar/maven/3.5.0/bin:~/.gem/ruby/2.0.0/bin:/Users/eddielaw/.node/bin:/bin:/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/Users/eddielaw/local/bin:/Users/eddielaw/.cargo/bin:/Users/eddielaw/Development/scripts/racer/target/release:/Users/eddielaw/node_modules/.bin//Users/eddielaw/.yarn/bin:/Users/eddielaw/.config/yarn/global/node_modules/.bin:/Users/eddielaw/Library/Python/3.7/bin:/Users/eddielaw/Development/scripts/bin/flutter/bin/:/Users/eddielaw/Development/scripts/bin/:/usr/local/Cellar/maven/3.5.0/bin:~/.gem/ruby/2.0.0/bin:/Users/eddielaw/.node/bin:/bin:/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/Users/eddielaw/local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/eddielaw/Downloads/google-cloud-sdk/bin:/Users/eddielaw/.cargo/bin:/Users/eddielaw/Development/scripts/racer/target/release:/Users/eddielaw/node_modules/.bin//Users/eddielaw/.yarn/bin:/Users/eddielaw/.config/yarn/global/node_modules/.bin:/Users/eddielaw/Library/Python/3.7/bin:/Users/eddielaw/Development/scripts/bin/flutter/bin/:/Users/eddielaw/Development/scripts/bin/:/usr/local/Cellar/maven/3.5.0/bin:~/.gem/ruby/2.0.0/bin:/Users/eddielaw/.node/bin:/usr/local/sbin:/Users/eddielaw/local/bin:/Users/eddielaw/Go/bin:/usr/local/opt/go/libexec/bin:/Users/eddielaw/Development/scripts/bin/flutter/.pub-cache/bin:/Users/eddielaw/Go/bin:/usr/local/opt/go/libexec/bin:/Users/eddielaw/Development/scripts/bin/flutter/.pub-cache/bin:/Users/eddielaw/Go/bin:/usr/local/opt/go/libexec/bin:/Users/eddielaw/Development/scripts/bin/flutter/.pub-cache/bin
+
+Yarn version: 
+  1.15.2
+
+Node version: 
+  11.15.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/eddielaw/Development/personal/kf-game-engine/packages/bs-kf1-game-utils/package.json: Unexpected token { in JSON at position 552
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.15.2/libexec/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.15.2/libexec/lib/cli.js:304:30)
+      at /usr/local/Cellar/yarn/1.15.2/libexec/lib/cli.js:315:13
+
+npm manifest: 
+  {
+    "name": "bs-kf1-game-utils",
+    "version": "0.1.0",
+    "scripts": {
+      "build": "bsb -make-world",
+      "doc": "bsdoc support-files",
+      "start": "bsb -make-world -w",
+      "test": "jest",
+      "clean": "bsb -clean-world"
+    },
+    "keywords": [
+      "BuckleScript"
+    ],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+      "bs-platform": "^5.0.4",
+      "bsdoc": "^6.0.2-alpha"
+    },
+    "dependencies": {
+      "@glennsl/bs-jest": "^0.4.8",
+      "bs-platform": "^5.0.4",
+      "global": "^4.4.0"
+    },
+    "jest": {
+      "testURL": "http://localhost/",
+      {
+        "transform": {
+          "**/es6/**": "<rootDir>/node_modules/babel-jest"
+        }
+      },
+      "verbose": true
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
