@@ -4,6 +4,7 @@ import {
   values,
   map,
   flatten,
+  curry,
 } from 'ramda';
 
 export const ANCHOR_MID = 'm';
@@ -75,7 +76,7 @@ function createSpriteForChar({ spriteSheetArgs, pos, anchor }) {
  * @param anims
  * @returns {undefined}
  */
-function createAnimsForChar(engine, anims) {
+function createAnimsForChar(anims) {
   const defaultAnims = {
     spriteHandler: (sprite) => {
       sprite.loop = true;
@@ -96,9 +97,9 @@ function createAnimsForChar(engine, anims) {
  * @param {spriteSheetArgs}
  * @returns {function} returns a functions that takes instance arguments as an object
  */
-function createCharFactory(engine, charArgs, initialState) {
+function createCharFactory(initialState, charArgs) {
   const sprite = createSpriteForChar({ ...charArgs, ...initialState });
-  const anims = (charArgs.anims) && createAnimsForChar(engine, charArgs.anims);
+  const anims = (charArgs.anims) && createAnimsForChar(charArgs.anims);
   const { charK, ...state } = initialState;
   return {
     state,
@@ -115,15 +116,15 @@ function createCharFactory(engine, charArgs, initialState) {
  * @param config {Object} object with character keys and position as and attribute
  * @returns {Object} character object
  */
-export function createCharEntities(engine, config, charFactoryDict) {
+export function createCharEntities(charConfig, charTypesDict) {
   const getCharK = v => v.charK;
-  return Object.entries(config).reduce((acc, [k, initialStateObj]) =>
+  return Object.entries(charConfig).reduce((acc, [k, initialStateObj]) =>
     ({
       ...acc,
       [k]: pipe(
         getCharK,
-        charK => charFactoryDict[charK],
-        charFactoryArgs => createCharFactory(engine, charFactoryArgs, initialStateObj),
+        charK => charTypesDict[charK],
+        curry(createCharFactory)(initialStateObj),
       )(initialStateObj),
     }), {});
 }
