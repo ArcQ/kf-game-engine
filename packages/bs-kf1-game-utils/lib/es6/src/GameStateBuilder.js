@@ -2,6 +2,8 @@
 
 import * as List from "bs-platform/lib/es6/list.js";
 
+var renderOnlyKeys = /* array */["charK"];
+
 function filterWasmConfig(keys) {
   var wasmConfig = { };
   List.map((function (k) {
@@ -10,32 +12,6 @@ function filterWasmConfig(keys) {
         }), keys);
   return wasmConfig;
 }
-
-var charEntities_000 = /* tuple */[
-  "P1",
-  /* array */[
-    100,
-    100
-  ],
-  "assasin"
-];
-
-var charEntities_001 = /* :: */[
-  /* tuple */[
-    "P2",
-    /* array */[
-      200,
-      200
-    ],
-    "knight"
-  ],
-  /* [] */0
-];
-
-var charEntities = /* :: */[
-  charEntities_000,
-  charEntities_001
-];
 
 function getInitialGameState(param) {
   var dict = { };
@@ -57,8 +33,8 @@ function getInitialGameState(param) {
 }
 
 export {
+  renderOnlyKeys ,
   filterWasmConfig ,
-  charEntities ,
   getInitialGameState ,
   
 }

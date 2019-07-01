@@ -7,11 +7,21 @@ describe("Expect", () => {
     expect(1 + 2) |> toBe(3))
 });
 
-describe("Expect.Operators", () => {
+describe("Get Initial Game State Should Return The Right Object", () => {
     open Expect;
-    open! Expect.Operators;
+    open ExpectJs;
 
-    test("==", () =>
-      expect(1 + 2) === 3)
+    let dict = Js.Dict.empty();
+    Js.Dict.set(dict, "P1", GameStateBuilder.charEntityState(
+        ~pos=[|100, 100|],
+        ~charK="assasin",
+    ));
+    Js.Dict.set(dict, "P2", GameStateBuilder.charEntityState(
+        ~pos=[|200, 200|],
+        ~charK="knight",
+    ));
+
+    test("correct return", () =>
+      expect(GameStateBuilder.getInitialGameState()) |> toEqual(dict))
   }
 );

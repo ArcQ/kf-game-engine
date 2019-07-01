@@ -1,5 +1,5 @@
 {
-  "name": "kf-game-engine",
+  "name": "kf-packages",
   "version": "0.0.0",
   "description": "",
   "private": true,
@@ -10,13 +10,14 @@
     "build": "yarn build:bs & yarn build:js",
     "start:js": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:bs'",
     "start:bs": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:js'",
-    "start": "nodemon --ignore **/dist/** --ext js --exec 'yarn build'",
-    
+    "start": "nodemon --ignore **/dist/** --ext js,re --exec 'yarn build'",
     "build:prod": "BABEL_ENV=production yarn build",
-    "test": "jest",
+    "test": "jest --testPathIgnorePatterns lib/js/*",
     "lint": "eslint --ignore-path .gitignore ./packages"
   },
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -26,7 +27,6 @@
     "rxjs": "6"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.8",
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
@@ -37,6 +37,7 @@
     "@babel/plugin-transform-async-to-generator": "^7.2.0",
     "@babel/plugin-transform-regenerator": "^7.0.0",
     "@babel/preset-env": "^7.1.0",
+    "@glennsl/bs-jest": "^0.4.8",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
     "babel-plugin-module-resolver": "^3.2.0",

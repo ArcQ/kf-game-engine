@@ -97,7 +97,7 @@ export default function createWasmGame({
   setUpEventListener({ onWasmStateChange });
 
   const wasmGame = new wasmBindgen[wasmConfig.name](wasmConfig.encoderKeys, wasmConfig.initConfig);
-  const onTick = dt => wasmGame.get_update(dt);
+  const onTick = dt => wasmGame.tick(dt);
 
   return {
     gameLoop: {
@@ -108,7 +108,7 @@ export default function createWasmGame({
     },
     wasmInterface: {
       toWasm: {
-        onTick: dt => wasmGame.get_update(dt),
+        onTick,
         reset: wasmGame.reset,
         onEvent: a => wasmGame.on_event(a),
       },

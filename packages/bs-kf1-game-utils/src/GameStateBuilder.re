@@ -12,6 +12,17 @@ type charEntityState = {
   charK: string,
 }
 
+let renderOnlyKeys = [|"charK"|];
+
+/* const getCombinedProps = _charProps => */
+/*   pipe( */
+/*     reduce((prev, [k, props]) => ({ */
+/*       ...prev, */
+/*       [k]: merge(props.game, props.render), */
+/*     }), {}), */
+/*     merge({ keys: Object.keys(_charProps) }), */
+/*   )(Object.entries(_charProps)) */
+
 let filterWasmConfig = (keys: list(string)) => {
   let wasmConfig = Js.Dict.empty();
   List.map(
@@ -21,19 +32,28 @@ let filterWasmConfig = (keys: list(string)) => {
   wasmConfig
 };
 
-let charEntities = [
-  ("P1", [|100, 100|], "assasin"),
-  ("P2", [|200, 200|], "knight")];
+/* let mergeInEntityKeys = (JsDict) => { */
+/*   let wasmConfig = Js.Dict.empty(); */
+/*   List.map( */
+/*     k => Js.Dict.set(wasmConfig, k, "1"),  */
+/*     keys, */
+/*   ) -> ignore; */
+/*   wasmConfig */
+/* }; */
+
+/* let charEntities = [ */
+/*   ("P1", [|100, 100|], "assasin"), */
+/*   ("P2", [|200, 200|], "knight")]; */
 
 let getInitialGameState = () => {
   let dict = Js.Dict.empty();
   Js.Dict.set(dict, "P1", charEntityState(
-    ~pos=[|100, 100|],
-    ~charK="assasin",
+      ~pos=[|100, 100|],
+      ~charK="assasin",
   ));
   Js.Dict.set(dict, "P2", charEntityState(
-    ~pos=[|200, 200|],
-    ~charK="knight",
+      ~pos=[|200, 200|],
+      ~charK="knight",
   ));
   dict
 }
