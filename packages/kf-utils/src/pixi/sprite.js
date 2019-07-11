@@ -58,11 +58,17 @@ export function setPos({ sprite, pos, anchor }) {
   sprite.position.y = spritePos[1]; //eslint-disable-line
 }
 
-function createSpriteForChar({ spriteSheetArgs, pos, anchor }) {
+function createSpriteForChar({
+  spriteSheetArgs,
+  pos,
+  anchor,
+  size: [height = 100, width = 100],
+  animationSpeed = 0.3,
+}) {
   const frames = getSpriteSheetFrames(...spriteSheetArgs);
   const anim = new PIXI.extras.AnimatedSprite(frames);
-  anim.height = 100;
-  anim.width = 100;
+  anim.height = height;
+  anim.width = width;
   setPos({ sprite: anim, pos, anchor: anchor || ANCHOR_BM });
   anim.anchor.set(0.5);
   anim.animationSpeed = 0.3;
@@ -71,12 +77,12 @@ function createSpriteForChar({ spriteSheetArgs, pos, anchor }) {
 }
 
 /**
- * createAnimsForChar note should document defaults
+ * createAnims note should document defaults
  *
  * @param anims
  * @returns {undefined}
  */
-function createAnimsForChar(anims) {
+function createAnims(anims) {
   const defaultAnims = {
     spriteHandler: (sprite) => {
       sprite.loop = true;
@@ -99,7 +105,7 @@ function createAnimsForChar(anims) {
  */
 function createCharFactory(initialState, charArgs) {
   const sprite = createSpriteForChar({ ...charArgs, ...initialState });
-  const anims = (charArgs.anims) && createAnimsForChar(charArgs.anims);
+  const anims = (charArgs.anims) && createAnims(charArgs.anims);
   const { charK, ...state } = initialState;
   return {
     state,

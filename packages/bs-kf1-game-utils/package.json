@@ -4,17 +4,18 @@
 	"keywords": [
 		"BuckleScript"
 	],
-  "scripts": {
-    "build": "bsb -make-world",
-    "start": "bsb -make-world -w",
-    "clean": "bsb -clean-world"
-  },
+	"scripts": {
+		"build": "bsb -make-world",
+		"start": "bsb -make-world -w",
+		"clean": "bsb -clean-world"
+	},
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
+		"@glennsl/bs-jest": "^0.4.8",
 		"bs-platform": "^5.0.4",
 		"bsdoc": "^6.0.2-alpha",
-		"@glennsl/bs-jest": "^0.4.8"
+		"jest-canvas-mock": "^2.1.0"
 	},
 	"dependencies": {
 		"global": "^4.4.0"
@@ -25,7 +26,7 @@
 			"lib/es6/*": "../../babel-jest-wrapper.js"
 		},
 		"transformIgnorePatterns": [
-			"<rootDir>/node_modules/(?!@glennsl/bs-jest|bs-platform).+\\.js$"
+			"<rootDir>/node_modules/(?!@glennsl/bs-jest|bs-platform|kf-utils).+\\.js$"
 		],
 		"verbose": true
 	}

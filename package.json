@@ -6,11 +6,11 @@
   "main": "es/engine/index.js",
   "scripts": {
     "build:js": "lerna exec --parallel --ignore bs- 'babel src --config babel.web.config.js --root-mode upward --out-dir dist --delete-dir-on-start --no-comments'",
-    "build:bs": "lerna exec --parallel --scope bs-* 'yarn build'",
+    "build:bs": "lerna exec --parallel 'yarn build'",
     "build": "yarn build:bs & yarn build:js",
     "start:js": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:bs'",
     "start:bs": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:js'",
-    "start": "nodemon --ignore **/dist/** --ext js,re --exec 'yarn build'",
+    "start": "nodemon --ignore **/dist/** --ignore **/lib/** --ext js,re --exec 'yarn build'",
     "build:prod": "BABEL_ENV=production yarn build",
     "test": "jest --testPathIgnorePatterns lib/js/*",
     "lint": "eslint --ignore-path .gitignore ./packages"
@@ -50,13 +50,21 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jest": "^22.3.0",
     "eslint-plugin-promise": "^3.8.0",
+    "jest-canvas-mock": "^2.1.0",
     "lerna": "^3.14.1"
   },
   "jest": {
     "testURL": "http://localhost/",
     "transform": {
+      "packages/kf-utils": "./babel-jest-wrapper.js",
       "lib/es6/*": "./babel-jest-wrapper.js"
     },
+    "setupFiles": [
+      "./setup.js"
+    ],
+    "testMatch": [
+      "**/?(*_)+(spec|test).[jt]s?(x)"
+    ],
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!@glennsl/bs-jest|bs-platform).+\\.js$"
     ],

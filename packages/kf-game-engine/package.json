@@ -8,7 +8,24 @@
     "kf-utils": "^0.0.0",
     "scale-to-window-pixi": "^1.2.0"
   },
+  "scripts": {
+    "build": "bsb -make-world && cp -rf lib/es6/src/* ./dist/ && cp ./__tests__/interop.js ./lib/es6/__tests__/interop_test.js && cp ./__tests__/pixi.mock.js ./lib/es6/__tests__/pixi.mock.js"
+  },
+  "jest": {
+    "testURL": "http://localhost/",
+    "transform": {
+      "lib/es6/*": "../../babel-jest-wrapper.js"
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!@glennsl/bs-jest|bs-platform).+\\.js$"
+    ],
+    "verbose": true
+  },
   "devDependencies": {
-    "@babel/node": "^7.4.5"
+    "@babel/node": "^7.4.5",
+    "@glennsl/bs-jest": "^0.4.8",
+    "bs-platform": "^5.0.4",
+    "bsdoc": "^6.0.2-alpha",
+    "jest-canvas-mock": "^2.1.0"
   }
 }
