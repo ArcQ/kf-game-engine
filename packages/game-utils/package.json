@@ -11,6 +11,7 @@
     "redux-actions": "^2.6.4"
   },
   "devDependencies": {
+    "bs-platform": "^5.0.6",
     "jest-canvas-mock": "^2.1.0"
   }
 }
