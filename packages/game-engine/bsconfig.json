@@ -1,8 +1,10 @@
 {
-  "name": "bs-kf1-game-utils",
+  "name": "@kf/game-engine",
   "version": "0.1.0",
   "sources": [{
     "dir" : "__tests__",
+    "suffix": ".test.js",
+    "subdirs" : true,
     "type": "dev"
   }, {
     "dir" : "src",
@@ -12,7 +14,7 @@
     "module": "es6",
     "in-source": false
   }],
-  "suffix": ".js",
+  "suffix": ".bs.js",
   "bs-dependencies": [],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "warnings": {

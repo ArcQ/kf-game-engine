@@ -1,6 +1,6 @@
-import { createCharFactory } from '../src/render/CharFactory';
+import { createCharFactory } from '../src/render/CharFactory.bs';
 
-jest.mock('kf-utils/dist/pixi/sprite');
+jest.mock('@kf/game-utils/dist/pixi/sprite');
 
 test('createCharFactory', () => {
   const charTypeDicts = {
@@ -32,7 +32,6 @@ test('createCharFactory', () => {
       pos: [200, 200],
     },
   }
-  console.log(createCharFactory(charTypeDicts, charType));
   expect().toBe();
 });
 

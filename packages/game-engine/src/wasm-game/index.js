@@ -1,5 +1,5 @@
 import { compose } from 'ramda';
-import { getWindow } from 'kf-utils/dist/render/global';
+import { getWindow } from '@kf/game-utils/dist/render/global';
 
 function _requestAnimationFrame(fn) {
   if (getWindow()) {

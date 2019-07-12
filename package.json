@@ -1,18 +1,17 @@
 {
-  "name": "kf-packages",
+  "name": "@kf/game-packages",
   "version": "0.0.0",
   "description": "",
   "private": true,
   "main": "es/engine/index.js",
   "scripts": {
-    "build:js": "lerna exec --parallel --ignore bs- 'babel src --config babel.web.config.js --root-mode upward --out-dir dist --delete-dir-on-start --no-comments'",
-    "build:bs": "lerna exec --parallel 'yarn build'",
-    "build": "yarn build:bs & yarn build:js",
+    "build": "lerna exec --parallel 'yarn build'",
     "start:js": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:bs'",
     "start:bs": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:js'",
     "start": "nodemon --ignore **/dist/** --ignore **/lib/** --ext js,re --exec 'yarn build'",
     "build:prod": "BABEL_ENV=production yarn build",
-    "test": "jest --testPathIgnorePatterns lib/js/*",
+    "test:old": "jest --testPathIgnorePatterns lib/js/*",
+    "test": "jest --watch",
     "lint": "eslint --ignore-path .gitignore ./packages"
   },
   "workspaces": [
@@ -39,9 +38,7 @@
     "@babel/preset-env": "^7.1.0",
     "@glennsl/bs-jest": "^0.4.8",
     "babel-eslint": "^10.0.1",
-    "babel-loader": "^8.0.4",
     "babel-plugin-module-resolver": "^3.2.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-import-resolver-node": "^0.3.1",
@@ -52,22 +49,5 @@
     "eslint-plugin-promise": "^3.8.0",
     "jest-canvas-mock": "^2.1.0",
     "lerna": "^3.14.1"
-  },
-  "jest": {
-    "testURL": "http://localhost/",
-    "transform": {
-      "packages/kf-utils": "./babel-jest-wrapper.js",
-      "lib/es6/*": "./babel-jest-wrapper.js"
-    },
-    "setupFiles": [
-      "./setup.js"
-    ],
-    "testMatch": [
-      "**/?(*_)+(spec|test).[jt]s?(x)"
-    ],
-    "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!@glennsl/bs-jest|bs-platform).+\\.js$"
-    ],
-    "verbose": true
   }
 }

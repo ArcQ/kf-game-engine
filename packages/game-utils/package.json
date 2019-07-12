@@ -1,10 +1,10 @@
 {
-  "name": "kf-utils",
+  "name": "@kf/game-utils",
   "version": "0.0.0",
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "true"
+    "build": "babel src --root-mode upward --out-dir dist --delete-dir-on-start --no-comments"
   },
   "dependencies": {
     "namespace-constants": "^0.5.0",

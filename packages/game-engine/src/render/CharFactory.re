@@ -42,7 +42,7 @@ module CharCreator {
       animationSpeed: float,
     };
 
-  [@bs.module "kf-utils/dist/pixi/sprite"] 
+  [@bs.module "@kf/game-utils/dist/pixi/sprite"] 
     external createSpriteForChar : charSpriteConfigJT => 
       pixiSpriteJT = "createSpriteForChar";
 
