@@ -1,0 +1,1 @@
+jest.genMockFromModule('@kf/game-utils/pixi/sprite');

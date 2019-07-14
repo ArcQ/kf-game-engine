@@ -14,22 +14,24 @@ type anchorT = int;
 type spriteSheetKsT = list(string);
 
 module CharCreator {
-  type charStateT = {
+  [@bs.deriving jsConverter]
+  type charState = {
     pos: Common.position,
   };
 
   [@bs.deriving abstract]
-    type pixiSpriteJT;
+    type pixiSpriteJ;
 
-  type charT = {
-    state: charStateT,
-    sprite: pixiSpriteJT,
-    anims: option(pixiSpriteJT),
+  [@bs.deriving jsConverter]
+  type char = {
+    charState,
+    sprite: pixiSpriteJ,
+    anims: option(pixiSpriteJ),
     charK: string,
   };
 
   [@bs.deriving abstract]
-    type charSpriteConfigJT = {
+    type charSpriteConfigJ = {
       pos: Common.position,
       spriteSheetKs: list(string),
       anchor: int,
@@ -38,8 +40,8 @@ module CharCreator {
     };
 
   [@bs.module "@kf/game-utils/dist/pixi/sprite"] 
-    external createSpriteForChar : charSpriteConfigJT => 
-      pixiSpriteJT = "createSpriteForChar";
+    external createSpriteForChar : charSpriteConfigJ => 
+      pixiSpriteJ = "createSpriteForChar";
 
   /* /** */
   /*  * createChar - creates a character type object */
@@ -50,7 +52,7 @@ module CharCreator {
   /*  */ */
     let createChar = (charType, charConfig) => {
       let pos = charConfig->posGet;
-      let charSpriteConfig = charSpriteConfigJT(
+      let charSpriteConfig = charSpriteConfigJ(
         ~pos = charConfig->posGet,
         ~spriteSheetKs = charType->spriteSheetKsGet,
         ~anchor = charType->anchorGet,
@@ -59,7 +61,7 @@ module CharCreator {
       );
       let sprite = createSpriteForChar(charSpriteConfig);
       {
-        state: { pos: pos },
+        charState: { pos: pos },
         sprite: sprite,
         anims: None,
         /* charK: charConfig->charKGet, */

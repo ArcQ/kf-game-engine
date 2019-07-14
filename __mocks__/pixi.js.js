@@ -1,1 +1,4 @@
-module.exports = jest.genMockFromModule('pixi.js');
+require('./pixi.mock.js');
+
+const PIXI = require('pixi.js');
+module.exports = PIXI;

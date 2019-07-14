@@ -2,6 +2,7 @@ const base = require('../../jest.config.base.js');
 
 module.exports = {
   ...base,
+  setupFiles: ['jest-canvas-mock'],
   transform: {
     'packages/game-utils': '../../babel-jest-wrapper.js',
     'lib/es6/*': '../../babel-jest-wrapper.js',

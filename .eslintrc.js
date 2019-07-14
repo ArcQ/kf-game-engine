@@ -6,6 +6,7 @@ module.exports = {
     'airbnb-base'
   ],
   'plugins': [
+    'eslint-plugin-flowtype',
     'babel',
     'promise',
     'jest'

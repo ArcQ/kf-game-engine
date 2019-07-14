@@ -1,0 +1,13 @@
+[ignore]
+
+[include]
+../../node_modules
+[libs]
+../../flow-typed
+
+[lints]
+
+[options]
+module.name_mapper='root_types' -> './src/'
+
+[strict]

@@ -7,11 +7,21 @@
     "build": "babel src --root-mode upward --out-dir dist --delete-dir-on-start --no-comments"
   },
   "dependencies": {
+    "@babel/preset-flow": "^7.0.0",
+    "babel-polyfill": "^6.26.0",
+    "eslint-plugin-flowtype": "^3.11.1",
+    "flow-typed": "^2.5.2",
     "namespace-constants": "^0.5.0",
-    "redux-actions": "^2.6.4"
+    "pixi.js": "^5.0.4",
+    "ramda": "^0.26.1",
+    "redux-actions": "^2.6.4",
+    "rxjs": "^6.5.2"
   },
   "devDependencies": {
     "bs-platform": "^5.0.6",
+    "eslint-plugin-flowtype": "^3.11.1",
+    "flow-bin": "^0.102.0",
+    "flowgen": "^1.9.2",
     "jest-canvas-mock": "^2.1.0"
   }
 }

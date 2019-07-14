@@ -2,6 +2,7 @@ module.exports = function (api) {
   api.cache(true);
 
   return {
+    presets: ['@babel/preset-flow'],
     plugins: [
       ['module-resolver', {
         root: ['./src/**'],
@@ -16,6 +17,7 @@ module.exports = function (api) {
       '@babel/plugin-proposal-json-strings',
       '@babel/plugin-transform-regenerator',
       '@babel/plugin-transform-async-to-generator',
+
     ],
     env: {
       test: {

@@ -1,8 +1,8 @@
-import { createCharFactory } from '../src/render/CharFactory.bs';
+import { createStateBuilder } from '../src/render/State.bs';
 
 jest.mock('@kf/game-utils/dist/pixi/sprite');
 
-test('createCharFactory', () => {
+test('createStateBuilder', () => {
   const charTypeDicts = {
     assasin: {
       anims: {
@@ -22,7 +22,7 @@ test('createCharFactory', () => {
       },
     },
   };
-  const charType = {
+  const initialCharConfig = {
     P1: {
       charK: 'assasin',
       pos: [100, 100],
@@ -31,7 +31,7 @@ test('createCharFactory', () => {
       charK: 'knight',
       pos: [200, 200],
     },
-  }
-  expect().toBe();
+  };
+  const initState = createStateBuilder(charTypeDicts)
+  expect(initState(initialCharConfig)).toBe(1);
 });
-

@@ -1,11 +1,10 @@
-// @flow
+// @flow weak
 //
+import type { engine } from 'types';
 import * as PIXI from 'pixi.js';
 import {
   pipe,
-  values,
   map,
-  flatten,
   curry,
 } from 'ramda';
 
@@ -105,58 +104,15 @@ function createAnims(anims) {
  * @param {spriteSheetArgs}
  * @returns {function} returns a functions that takes instance arguments as an object
  */
-function createCharFactory(initialState, charArgs) {
-  const sprite = createSpriteForChar({ ...charArgs, ...initialState });
-  const anims = (charArgs.anims) && createAnims(charArgs.anims);
-  const { charK, ...state } = initialState;
-  return {
-    state,
-    sprite,
-    anims,
-    charArgs,
-    charK,
-  };
-}
-
-/**
- * createCharEntities
- *
- * @param config {Object} object with character keys and position as and attribute
- * @returns {Object} character object
- */
-export function createCharEntities(charConfig, charTypesDict) {
+export function createCharFactory(charTypeDicts, initialStateObj) {
   const getCharK = v => v.charK;
-  return Object.entries(charConfig).reduce((acc, [k, initialStateObj]) =>
+  return Object.entries(initialStateObj).reduce((acc, [k, charConfig]) =>
     ({
       ...acc,
       [k]: pipe(
         getCharK,
-        charK => charTypesDict[charK],
-        curry(createCharFactory)(initialStateObj),
-      )(initialStateObj),
+        charK => charTypeDicts[charK],
+        curry(createCharFactory)(charConfig),
+      )(charConfig),
     }), {});
-}
-
-
-/**
- * getSpritesFromCharEntities
- * @param charEntities {Array[charEntity]} an array of entity objects {}
- *
- * @returns {undefined}
- */
-export const getSpritesFromCharEntities = pipe(
-  values,
-  map(v => v.sprite),
-);
-
-/**
- *  addAllToStage - curied function (engine) => (sprites)
- *  @param sprites {Array[Sprite]} add an array of sprite to stage
- * @returns {undefined}
- */
-export function addAllToStage(engine, args) {
-  return pipe(
-    flatten,
-    map(s => engine.app.stage.addChild(s)),
-  )(args);
 }

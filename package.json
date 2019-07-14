@@ -5,6 +5,9 @@
   "private": true,
   "main": "es/engine/index.js",
   "scripts": {
+    "flow": "flow",
+    "flow-check": "lerna exec flow-check",
+    "flow-typed": "lerna exec flow-typed",
     "build": "lerna exec --parallel 'yarn build'",
     "start:js": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:bs'",
     "start:bs": "nodemon --ignore **/dist/** --ext js --exec 'yarn build:js'",
@@ -20,10 +23,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
-    "pixi.js": "4.8.6",
-    "ramda": "^0.25.0",
-    "rxjs": "6"
+    "@babel/preset-flow": "^7.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
@@ -47,6 +47,8 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jest": "^22.3.0",
     "eslint-plugin-promise": "^3.8.0",
+    "flow-mono-cli": "^1.5.0",
+    "flow-typed": "^2.5.2",
     "jest-canvas-mock": "^2.1.0",
     "lerna": "^3.14.1"
   }

@@ -18,25 +18,32 @@ module JsAdapter {
       charK: string,
     };
 
-  type itemStateT = {
+  type graphicsState = {
     isShow: bool,
     pos: Common.position,
   };
 
   type state = {
-    characters: Common.StringMap.t(CharFactory.CharCreator.charT),
-    items: itemStateT,
+    characters: Common.StringMap.t(CharFactory.CharCreator.char),
+    items: Common.StringMap.t(graphicsState),
   }
-  
-  module StringMap = Map.Make(String);
+
+  type stateInterface = {
+    getCharacter: (~k: string, ~attrK: string) => CharFactory.CharCreator.char,
+    getItems: (~k: string, ~attrK: string) => graphicsState,
+  } 
   
   let stateBuilder = (charFactory, initialConfig) => {
-    charFactory(initialConfig);
+    {
+      characters: charFactory(initialConfig),
+      items: Common.StringMap.empty,
+    }
   };
 
   let createStateBuilder = (charTypeDicts) => {
     let charFactory = CharFactory.createCharFactory(charTypeDicts);
     stateBuilder(charFactory)
+    {pos: [1, 2]}
   }
 };
 
