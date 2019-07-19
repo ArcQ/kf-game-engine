@@ -1,10 +1,10 @@
 import { createStateBuilder } from '../src/render/State.bs';
 
-jest.mock('@kf/game-utils/dist/pixi/sprite');
-
 test('createStateBuilder', () => {
   const charTypeDicts = {
     assasin: {
+      animationSpeed: 0.3,
+      spriteSheetKs: ['chars', 'assasins0', '1_IDLE'],
       anims: {
         IDLE: ['chars', 'assasins0', '1_IDLE'],
         MOVE: ['chars', 'assasins0', '2_WALK'],
@@ -15,11 +15,10 @@ test('createStateBuilder', () => {
           },
           onComplete: () => jest.fn(),
         },
-        spriteSheetArgs: ['chars', 'assasins0', '1_IDLE'],
-        knight: {
-          spriteSheetArgs: ['chars', 'knights0', '_IDLE/_IDLE'],
-        },
       },
+    },
+    knight: {
+      spriteSheetArgs: ['chars', 'knights0', '_IDLE/_IDLE'],
     },
   };
   const initialCharConfig = {
@@ -32,6 +31,6 @@ test('createStateBuilder', () => {
       pos: [200, 200],
     },
   };
-  const initState = createStateBuilder(charTypeDicts)
-  expect(initState(initialCharConfig)).toBe(1);
+  const initState = createStateBuilder(charTypeDicts);
+  expect(initState({ charConfig: initialCharConfig })).toBe(1);
 });

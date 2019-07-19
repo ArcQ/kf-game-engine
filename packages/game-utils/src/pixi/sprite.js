@@ -1,5 +1,3 @@
-// @flow
-//
 import * as PIXI from 'pixi.js';
 import {
   pipe,
@@ -60,20 +58,24 @@ export function setPos({ sprite, pos, anchor }) {
   sprite.position.y = spritePos[1]; //eslint-disable-line
 }
 
-function createSpriteForChar({
-  spriteSheetArgs,
+export function createSpriteForChar({
+  spriteSheetKs,
   pos,
-  anchor,
-  size: [height = 100, width = 100],
+  anchor = ANCHOR_BM,
+  size: [
+    height = 100,
+    width = 100,
+  ] = [100, 100],
   animationSpeed = 0.3,
 }) {
-  const frames = getSpriteSheetFrames(...spriteSheetArgs);
+  console.log(PIXI)
+  const frames = getSpriteSheetFrames(...spriteSheetKs);
   const anim = new PIXI.extras.AnimatedSprite(frames);
   anim.height = height;
   anim.width = width;
-  setPos({ sprite: anim, pos, anchor: anchor || ANCHOR_BM });
+  setPos({ sprite: anim, pos, anchor: anchor });
   anim.anchor.set(0.5);
-  anim.animationSpeed = 0.3;
+  anim.animationSpeed = animationSpeed;
   anim.play();
   return anim;
 }
@@ -102,7 +104,7 @@ function createAnims(anims) {
  * charFactory - returns function that creates a character type object
  * that has initial state and sprite
  *
- * @param {spriteSheetArgs}
+ * @param {spriteSheetKs}
  * @returns {function} returns a functions that takes instance arguments as an object
  */
 function createCharFactory(initialState, charArgs) {
@@ -160,3 +162,5 @@ export function addAllToStage(engine, args) {
     map(s => engine.app.stage.addChild(s)),
   )(args);
 }
+
+export default {}

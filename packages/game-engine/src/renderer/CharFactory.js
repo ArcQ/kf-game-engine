@@ -1,6 +1,3 @@
-// @flow weak
-//
-import type { engine } from 'types';
 import * as PIXI from 'pixi.js';
 import {
   pipe,

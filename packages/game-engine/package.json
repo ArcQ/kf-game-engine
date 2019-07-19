@@ -4,13 +4,14 @@
   "main": "./dist/index.js",
   "license": "MIT",
   "dependencies": {
-    "flat": "^4.1.0",
     "@kf/game-utils": "^0.0.0",
+    "flat": "^4.1.0",
+    "pixi.js": "4",
     "scale-to-window-pixi": "^1.2.0"
   },
   "scripts": {
     "build:bs": "bsb -make-world && cp -rf lib/es6/src/* ./dist/ && cp ./__tests__/interop.js ./lib/es6/__tests__/interop_test.js",
-    "build:js": "babel src --root-mode upward --out-dir dist --delete-dir-on-start --no-comments",
+    "build:js": "babel src --root-mode upward --out-dir dist --no-comments",
     "build": "yarn build:js & yarn build:bs"
   },
   "devDependencies": {
