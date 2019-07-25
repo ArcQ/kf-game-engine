@@ -3,6 +3,7 @@ module.exports = function (api) {
 
   return {
     // presets: ['@babel/preset-flow'],
+    sourceMaps: 'both',
     plugins: [
       ['module-resolver', {
         root: ['./src/**'],

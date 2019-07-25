@@ -8,8 +8,6 @@ FLG -nostdlib -color always
 FLG -w -30-40+6+7+27+32..39+44+45+101
 S /Users/eddielaw/Development/personal/kf-game-engine/node_modules/@glennsl/bs-jest/lib/ocaml
 B /Users/eddielaw/Development/personal/kf-game-engine/node_modules/@glennsl/bs-jest/lib/ocaml
-S src/render
-B lib/bs/src/render
 S __tests__/render
 B lib/bs/__tests__/render
 ####BSB GENERATED: NO EDIT}

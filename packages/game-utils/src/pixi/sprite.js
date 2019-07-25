@@ -1,10 +1,8 @@
 import * as PIXI from 'pixi.js';
 import {
   pipe,
-  values,
   map,
   flatten,
-  curry,
 } from 'ramda';
 
 export const ANCHOR_MID = 'm';
@@ -58,98 +56,22 @@ export function setPos({ sprite, pos, anchor }) {
   sprite.position.y = spritePos[1]; //eslint-disable-line
 }
 
-export function createSpriteForChar({
+export function createSpriteForChar(
   spriteSheetKs,
   pos,
   anchor = ANCHOR_BM,
-  size: [
-    height = 100,
-    width = 100,
-  ] = [100, 100],
+  size = [100, 100],
   animationSpeed = 0.3,
-}) {
-  console.log(PIXI)
+) {
   const frames = getSpriteSheetFrames(...spriteSheetKs);
   const anim = new PIXI.extras.AnimatedSprite(frames);
-  anim.height = height;
-  anim.width = width;
-  setPos({ sprite: anim, pos, anchor: anchor });
+  [anim.width, anim.height] = size;
+  setPos({ sprite: anim, pos, anchor });
   anim.anchor.set(0.5);
   anim.animationSpeed = animationSpeed;
   anim.play();
   return anim;
 }
-
-/**
- * createAnims note should document defaults
- *
- * @param anims
- * @returns {undefined}
- */
-function createAnims(anims) {
-  const defaultAnims = {
-    spriteHandler: (sprite) => {
-      sprite.loop = true;
-    },
-  };
-  return map(
-    v => (Array.isArray(v)
-      ? { ...defaultAnims, frames: () => getSpriteSheetFrames(...v) }
-      : { ...defaultAnims, ...v }),
-    anims,
-  );
-}
-
-/**
- * charFactory - returns function that creates a character type object
- * that has initial state and sprite
- *
- * @param {spriteSheetKs}
- * @returns {function} returns a functions that takes instance arguments as an object
- */
-function createCharFactory(initialState, charArgs) {
-  const sprite = createSpriteForChar({ ...charArgs, ...initialState });
-  const anims = (charArgs.anims) && createAnims(charArgs.anims);
-  const { charK, ...state } = initialState;
-  return {
-    state,
-    sprite,
-    anims,
-    charArgs,
-    charK,
-  };
-}
-
-/**
- * createCharEntities
- *
- * @param config {Object} object with character keys and position as and attribute
- * @returns {Object} character object
- */
-export function createCharEntities(charConfig, charTypesDict) {
-  const getCharK = v => v.charK;
-  return Object.entries(charConfig).reduce((acc, [k, initialStateObj]) =>
-    ({
-      ...acc,
-      [k]: pipe(
-        getCharK,
-        charK => charTypesDict[charK],
-        curry(createCharFactory)(initialStateObj),
-      )(initialStateObj),
-    }), {});
-}
-
-
-/**
- * getSpritesFromCharEntities
- * @param charEntities {Array[charEntity]} an array of entity objects {}
- *
- * @returns {undefined}
- */
-export const getSpritesFromCharEntities = pipe(
-  values,
-  map(v => v.sprite),
-);
 
 /**
  *  addAllToStage - curied function (engine) => (sprites)
@@ -163,4 +85,4 @@ export function addAllToStage(engine, args) {
   )(args);
 }
 
-export default {}
+export default {};
