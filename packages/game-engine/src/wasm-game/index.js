@@ -87,6 +87,7 @@ export default function createWasmGame({
   wasmConfig,
   onWasmStateChange,
   globalOverride,
+  broadcastUnchanged = false,
 }) {
   let config;
 
@@ -96,7 +97,13 @@ export default function createWasmGame({
   );
   setUpEventListener({ onWasmStateChange });
 
-  const wasmGame = new wasmBindgen[wasmConfig.name](wasmConfig.encoderKeys, wasmConfig.initConfig);
+  const wasmName = wasmConfig.name || 'GameEnvAdapter';
+  const wasmGame = new wasmBindgen[wasmName](
+    broadcastUnchanged,
+    wasmConfig.encoderKeys,
+    wasmConfig.initConfig,
+  );
+
   const onTick = dt => wasmGame.tick(dt);
 
   return {

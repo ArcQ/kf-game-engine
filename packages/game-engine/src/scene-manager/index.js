@@ -172,7 +172,7 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
             wasmBindgen,
             fps: 40,
             wasmConfig: {
-              name: 'GameEnvAdapter',
+              name: sceneObj.wasmName,
               encoderKeys: sceneObj.encoderKeys,
               initConfig: flatten(mergeDeepRight(sceneObj.initConfig, asyncConfig), { safe: true }),
             },

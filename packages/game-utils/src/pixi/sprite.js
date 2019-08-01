@@ -56,23 +56,6 @@ export function setPos({ sprite, pos, anchor }) {
   sprite.position.y = spritePos[1]; //eslint-disable-line
 }
 
-export function createSpriteForChar(
-  spriteSheetKs,
-  pos,
-  anchor = ANCHOR_BM,
-  size = [100, 100],
-  animationSpeed = 0.3,
-) {
-  const frames = getSpriteSheetFrames(...spriteSheetKs);
-  const anim = new PIXI.extras.AnimatedSprite(frames);
-  [anim.width, anim.height] = size;
-  setPos({ sprite: anim, pos, anchor });
-  anim.anchor.set(0.5);
-  anim.animationSpeed = animationSpeed;
-  anim.play();
-  return anim;
-}
-
 /**
  *  addAllToStage - curied function (engine) => (sprites)
  *  @param sprites {Array[Sprite]} add an array of sprite to stage
