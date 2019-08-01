@@ -4,7 +4,7 @@
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "babel src --root-mode upward --out-dir dist --delete-dir-on-start --no-comments"
+    "build": "babel src --root-mode upward --delete-dir-on-start --no-comments"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",

@@ -18,10 +18,14 @@ module.exports = function (api) {
       '@babel/plugin-proposal-json-strings',
       '@babel/plugin-transform-regenerator',
       '@babel/plugin-transform-async-to-generator',
-
     ],
     env: {
       test: {
+        plugins: [
+          '@babel/plugin-transform-modules-commonjs',
+        ],
+      },
+      cjs: {
         plugins: [
           '@babel/plugin-transform-modules-commonjs',
         ],

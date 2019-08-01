@@ -10,7 +10,7 @@
     "scale-to-window-pixi": "^1.2.0"
   },
   "scripts": {
-    "build": "babel src --root-mode upward --out-dir dist --no-comments"
+    "build": "babel src --root-mode upward --no-comments"
   },
   "devDependencies": {
     "jest-canvas-mock": "^2.1.0"

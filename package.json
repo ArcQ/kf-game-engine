@@ -5,10 +5,10 @@
   "private": true,
   "main": "es/engine/index.js",
   "scripts": {
-    "build": "lerna exec --parallel 'yarn build'",
-    "start": "nodemon --ignore **/dist/** --ignore **/lib/** --ext js --exec 'yarn build'",
-    "build:prod": "BABEL_ENV=production yarn build",
-    "test:old": "jest --testPathIgnorePatterns lib/js/*",
+    "start": "lerna exec --parallel 'yarn build -d es -w'",
+    "build:cjs": "lerna exec --parallel 'BABEL_ENV=cjs yarn build -d dist'",
+    "build:es": "lerna exec --parallel 'yarn build -d es'",
+    "build": "yarn build:cjs && yarn build:es",
     "test": "jest --watch",
     "lint": "eslint --ignore-path .gitignore ./packages"
   },

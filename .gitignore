@@ -4,3 +4,5 @@ es
 .DS_STORE
 .vscode
 lib
+*.log
+
