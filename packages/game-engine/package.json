@@ -10,14 +10,9 @@
     "scale-to-window-pixi": "^1.2.0"
   },
   "scripts": {
-    "build:bs": "bsb -make-world && cp -rf lib/es6/src/* ./dist/ && cp ./__tests__/interop.js ./lib/es6/__tests__/interop_test.js",
-    "build:js": "babel src --root-mode upward --out-dir dist --no-comments",
-    "build": "yarn build:js & yarn build:bs"
+    "build": "babel src --root-mode upward --out-dir dist --no-comments"
   },
   "devDependencies": {
-    "@glennsl/bs-jest": "^0.4.8",
-    "bs-platform": "^5.0.4",
-    "bsdoc": "^6.0.2-alpha",
     "jest-canvas-mock": "^2.1.0"
   }
 }

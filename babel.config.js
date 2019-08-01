@@ -2,7 +2,6 @@ module.exports = function (api) {
   api.cache(true);
 
   return {
-    // presets: ['@babel/preset-flow'],
     sourceMaps: 'both',
     plugins: [
       ['module-resolver', {
