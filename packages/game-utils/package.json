@@ -1,10 +1,11 @@
 {
   "name": "@kf/game-utils",
   "version": "0.0.0",
-  "main": "./dist/index.js",
+  "main": "./es/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "babel src --root-mode upward --delete-dir-on-start --no-comments"
+    "build": "babel src --root-mode upward --delete-dir-on-start --no-comments",
+    "watch": "babel src --root-mode upward --delete-dir-on-start --no-comments -w --verbose"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",

@@ -5,7 +5,7 @@
   "private": true,
   "main": "es/engine/index.js",
   "scripts": {
-    "start": "lerna exec --parallel 'yarn build -d es -w'",
+    "start": "lerna exec --parallel 'yarn watch -d es'",
     "build:cjs": "lerna exec --parallel 'BABEL_ENV=cjs yarn build -d dist'",
     "build:es": "lerna exec --parallel 'yarn build -d es'",
     "build": "yarn build:cjs && yarn build:es",

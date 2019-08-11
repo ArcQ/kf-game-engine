@@ -10,7 +10,7 @@ import {
   setPos,
   ANCHOR_BM,
   getSpriteSheetFrames,
-} from '@kf/game-utils/dist/pixi/sprite';
+} from '@kf/game-utils/es/pixi/sprite';
 
 function createSpriteForChar({
   spriteSheetKs,

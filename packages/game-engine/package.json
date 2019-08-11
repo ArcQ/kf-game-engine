@@ -1,7 +1,7 @@
 {
   "name": "@kf/game-engine",
   "version": "0.0.0",
-  "main": "./dist/index.js",
+  "main": "./es/index.js",
   "license": "MIT",
   "dependencies": {
     "@kf/game-utils": "^0.0.0",
@@ -12,7 +12,8 @@
     "scale-to-window-pixi": "^1.2.0"
   },
   "scripts": {
-    "build": "babel src --root-mode upward --no-comments"
+    "build": "babel src --root-mode upward --delete-dir-on-start --no-comments",
+    "watch": "babel src --root-mode upward --delete-dir-on-start --no-comments -w --verbose"
   },
   "devDependencies": {
     "jest-canvas-mock": "^2.1.0"

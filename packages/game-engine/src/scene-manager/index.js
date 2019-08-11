@@ -72,7 +72,7 @@ import createWasmGame, { runOnWasmLoad } from 'wasm-game';
 
 import { actions as gameEngineActions } from 'store/ducks';
 import flatten from 'flat';
-import { nextStateObserver, resetObserver } from 'wasm-game/stateObservers';
+import { nextStateSubject, resetSubject } from 'wasm-game/stateSubjects';
 
 /**
  * _createLoadObs - creates the observer that first loads the loading scene assets
@@ -140,10 +140,10 @@ function _loadScene(engine, wrappedScene, assetUrl) {
   );
 }
 
-function setUpObserversAndAutoPlay(sceneObj, engine) {
-  resetObserver(sceneObj.instanceName, sceneObj.initConfig);
+function setUpObserversAndAutoPlay(autoPlayK, sceneObj, engine) {
+  resetSubject(autoPlayK, sceneObj.initConfig);
   engine.resetWasm = (newState) => {
-    resetObserver(sceneObj.instanceName, newState);
+    resetSubject(autoPlayK, sceneObj, newState);
     engine.resetWasm(newState);
   };
 }
@@ -187,7 +187,7 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
             },
             onWasmStateChange: (stateDiffBytes) => {
               if (autoPlayK) {
-                nextStateObserver(autoPlayK, stateDiffBytes);
+                nextStateSubject(autoPlayK, stateDiffBytes);
               }
               sceneObj.update(stateDiffBytes);
             },
@@ -196,13 +196,11 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
           gameLoop.start();
 
           engine.onEvent = wasmInterface.toWasm.onEvent;
-          engine.resetWasm = (newState) => {
-            resetObserver(sceneObj.instanceName, newState);
-            wasmInterface.toWasm.reset(newState);
-          };
+          engine.resetWasm = wasmInterface.toWasm.reset;
 
           if (autoPlayK) {
             setUpObserversAndAutoPlay(
+              autoPlayK,
               sceneObj,
               engine,
             );
