@@ -1,5 +1,5 @@
 {
-  "name": "@kf/game-utils",
+  "name": "@kf/kf1-utils",
   "version": "0.0.0",
   "main": "./dist/index.js",
   "license": "MIT",

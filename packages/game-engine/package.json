@@ -7,6 +7,8 @@
     "@kf/game-utils": "^0.0.0",
     "flat": "^4.1.0",
     "pixi.js": "4",
+    "ramda": "^0.26.1",
+    "rxjs": "^6.5.2",
     "scale-to-window-pixi": "^1.2.0"
   },
   "scripts": {

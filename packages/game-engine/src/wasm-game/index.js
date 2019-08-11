@@ -1,5 +1,5 @@
 import { compose } from 'ramda';
-import { getWindow } from '@kf/game-utils/dist/render/global';
+import { getWindow } from '@kf/game-utils/es/render/global';
 
 function _requestAnimationFrame(fn) {
   if (getWindow()) {
@@ -74,7 +74,6 @@ export function runOnWasmLoad(cb) {
   }
 }
 
-
 /**
  * createWasmGame - only should be direclty called in node,
  * in the actual client app, you should use scene-manager to invoke this
@@ -116,7 +115,9 @@ export default function createWasmGame({
     wasmInterface: {
       toWasm: {
         onTick,
-        reset: wasmGame.reset,
+        reset: (state) => {
+          wasmGame.reset(state);
+        },
         onEvent: a => wasmGame.on_event(a),
       },
     },

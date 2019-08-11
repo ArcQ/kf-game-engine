@@ -1,7 +1,7 @@
 import * as _PIXI from 'pixi.js';
 import { actions as gameEngineActions } from 'store/ducks';
 import scaleToWindowPixi from 'scale-to-window-pixi';
-import { getWindow, getDocument, devicePixelRatio } from '@kf/game-utils/dist/render/global';
+import { getWindow, getDocument, devicePixelRatio } from '@kf/game-utils/es/render/global';
 import assetManager from './asset-manager';
 import sceneManager from './scene-manager';
 import helperMethods from './helper-methods';

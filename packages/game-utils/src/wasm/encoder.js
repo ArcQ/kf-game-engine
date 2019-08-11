@@ -51,7 +51,7 @@ export default (encoderKeys) => {
         splitIntoBlocksOfState({ stateBlocks: [], origByteArr: gameStateByteArr })
           .map(([k, ...data]) =>
             stateUpdateHandler[encoder.decode(k)]
-              && stateUpdateHandler[encoder.decode(k)](data)(encoder));
+              && stateUpdateHandler[encoder.decode(k)](data));
       };
     },
   };

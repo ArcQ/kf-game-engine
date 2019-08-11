@@ -67,11 +67,12 @@ import { forkJoin, of } from 'rxjs';
 import {
   concat, map, tap, catchError,
 } from 'rxjs/operators';
-import { curry, mergeDeepRight } from 'ramda';
+import { curry, mergeDeepRight, pathOr } from 'ramda';
 import createWasmGame, { runOnWasmLoad } from 'wasm-game';
 
 import { actions as gameEngineActions } from 'store/ducks';
 import flatten from 'flat';
+import { nextStateObserver, resetObserver } from 'wasm-game/stateObservers';
 
 /**
  * _createLoadObs - creates the observer that first loads the loading scene assets
@@ -96,7 +97,6 @@ function _createLoadObs(engine, wrappedScene, assetUrl) {
   // };
   const launchLoadingScene$ = tap(null, null, () =>
     engine.ui.dispatch(gameEngineActions.pushLocation({ path: loadingSceneObj.uiRoute })));
-
   const setLoadPercentage$ = map(({ percentage }) => {
     engine.ui.dispatch(
       gameEngineActions.setLoadPercentage({ percentage }),
@@ -140,6 +140,14 @@ function _loadScene(engine, wrappedScene, assetUrl) {
   );
 }
 
+function setUpObserversAndAutoPlay(sceneObj, engine) {
+  resetObserver(sceneObj.instanceName, sceneObj.initConfig);
+  engine.resetWasm = (newState) => {
+    resetObserver(sceneObj.instanceName, newState);
+    engine.resetWasm(newState);
+  };
+}
+
 let prevGameLoop;
 
 /**
@@ -149,6 +157,7 @@ let prevGameLoop;
  * @returns {SceneDef}
  */
 function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
+  const autoPlayK = pathOr(null, ['autoPlay', 'instanceName'], sceneObj);
   const wrappedScene = Object.assign({}, sceneObj, {
     start() {
       if (prevGameLoop) prevGameLoop.stop();
@@ -176,13 +185,29 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
               encoderKeys: sceneObj.encoderKeys,
               initConfig: flatten(mergeDeepRight(sceneObj.initConfig, asyncConfig), { safe: true }),
             },
-            onWasmStateChange: sceneObj.update,
+            onWasmStateChange: (stateDiffBytes) => {
+              if (autoPlayK) {
+                nextStateObserver(autoPlayK, stateDiffBytes);
+              }
+              sceneObj.update(stateDiffBytes);
+            },
           });
 
           gameLoop.start();
 
           engine.onEvent = wasmInterface.toWasm.onEvent;
-          engine.resetWasm = wasmInterface.toWasm.reset;
+          engine.resetWasm = (newState) => {
+            resetObserver(sceneObj.instanceName, newState);
+            wasmInterface.toWasm.reset(newState);
+          };
+
+          if (autoPlayK) {
+            setUpObserversAndAutoPlay(
+              sceneObj,
+              engine,
+            );
+          }
+
           // TODO wait on mount of ui elements
           if (sceneObj.start) setTimeout(() => sceneObj.start(), 500);
           prevGameLoop = gameLoop;
