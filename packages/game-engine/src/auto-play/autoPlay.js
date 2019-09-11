@@ -32,7 +32,9 @@ function runAutoPlay(config, actionsMapper, updatesMapper) {
   return wasmStateObserver;
 }
 
-export default function allowAutoPlay(
+export default function autoPlay(
+  k,
+  onEvent,
   initialState,
   config,
   actionsMapper,

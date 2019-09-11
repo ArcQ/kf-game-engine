@@ -67,7 +67,7 @@ import { forkJoin, of } from 'rxjs';
 import {
   concat, map, tap, catchError,
 } from 'rxjs/operators';
-import { curry, mergeDeepRight, pathOr } from 'ramda';
+import { curry, mergeDeepRight, pathOr, pipe } from 'ramda';
 import createWasmGame, { runOnWasmLoad } from 'wasm-game';
 
 import { actions as gameEngineActions } from 'store/ducks';
@@ -146,7 +146,19 @@ function setUpObserversAndAutoPlay(autoPlayK, sceneObj, engine) {
     resetSubject(autoPlayK, sceneObj, newState);
     engine.resetWasm(newState);
   };
+
+  import('../auto-play/autoPlay').then((module) => {
+    const autoPlay = module.default;
+    autoPlay(autoPlayK, engine.onEvent, sceneObj.initConfig);
+  });
 }
+
+/**
+ * updateStateOnTick -> (gameStateByteArr) => ...
+ *
+ * @param encoder
+ * @returns {undefined}
+ */
 
 let prevGameLoop;
 
@@ -170,46 +182,45 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
      */
     onFinishLoad(asyncConfig) {
       runOnWasmLoad((wasm, wasmBindgen) => {
-        if (sceneObj.update) {
-          window.encoderKeys = sceneObj.encoderKeys;
-          // TODO should load earlier and be the last 10% that gets loaded
-          const {
-            gameLoop,
-            wasmInterface,
-          } = createWasmGame({
-            wasm,
-            wasmBindgen,
-            fps: 40,
-            wasmConfig: {
-              name: sceneObj.wasmName,
-              encoderKeys: sceneObj.encoderKeys,
-              initConfig: flatten(mergeDeepRight(sceneObj.initConfig, asyncConfig), { safe: true }),
-            },
-            onWasmStateChange: (stateDiffBytes) => {
-              if (autoPlayK) {
-                nextStateSubject(autoPlayK, stateDiffBytes);
-              }
-              sceneObj.update(stateDiffBytes);
-            },
-          });
+        window.encoderKeys = sceneObj.encoderKeys;
+        // TODO should load earlier and be the last 10% that gets loaded
+        const {
+          gameLoop,
+          wasmInterface,
+        } = createWasmGame({
+          wasm,
+          wasmBindgen,
+          fps: 40,
+          wasmConfig: {
+            name: sceneObj.wasmName,
+            encoderKeys: sceneObj.encoderKeys,
+            initConfig: flatten(mergeDeepRight(sceneObj.initConfig, asyncConfig), { safe: true }),
+          },
+          onWasmStateChange: (stateDiffBytes) => {
+            if (autoPlayK) {
+              nextStateSubject(autoPlayK, stateDiffBytes);
+            }
+            if (typeof sceneObj.update === 'function') sceneObj.update(stateDiffBytes);
+            sceneObj.encoder.decodeByteArray(sceneObj.updateHandlers)(stateDiffBytes);
+          },
+        });
 
-          gameLoop.start();
+        gameLoop.start();
 
-          engine.onEvent = wasmInterface.toWasm.onEvent;
-          engine.resetWasm = wasmInterface.toWasm.reset;
+        engine.onEvent = wasmInterface.toWasm.onEvent;
+        engine.resetWasm = wasmInterface.toWasm.reset;
 
-          if (autoPlayK) {
-            setUpObserversAndAutoPlay(
-              autoPlayK,
-              sceneObj,
-              engine,
-            );
-          }
-
-          // TODO wait on mount of ui elements
-          if (sceneObj.start) setTimeout(() => sceneObj.start(), 500);
-          prevGameLoop = gameLoop;
+        if (autoPlayK) {
+          setUpObserversAndAutoPlay(
+            autoPlayK,
+            sceneObj,
+            engine,
+          );
         }
+
+        // TODO wait on mount of ui elements
+        if (sceneObj.start) setTimeout(() => sceneObj.start(), 500);
+        prevGameLoop = gameLoop;
       });
     },
   });
