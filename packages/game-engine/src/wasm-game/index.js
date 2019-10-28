@@ -66,7 +66,8 @@ export function setWasmInterface(globalOverride) {
  * or whether it exists/isLoaded, else wait for it to load
  */
 export function runOnWasmLoad(cb) {
-  const _cb = () => cb(getWindow(['wasm']), getWindow(['wasm_bindgen']));
+  // check for wasm_bindgen for rust or check the manually set wasmAdapter
+  const _cb = () => cb(getWindow(['wasm_bindgen']) || getWindow(['wasmAdapter']));
   if (getWindow(['wasmLoaded'])) {
     _cb();
   } else {
@@ -81,7 +82,7 @@ export function runOnWasmLoad(cb) {
  * @returns GameInterface {gameLoop, wasmInterface}
  */
 export default function createWasmGame({
-  wasmBindgen,
+  wasmAdapter,
   fps = 40,
   wasmConfig,
   onWasmStateChange,
@@ -97,7 +98,7 @@ export default function createWasmGame({
   setUpEventListener({ onWasmStateChange });
 
   const wasmName = wasmConfig.name || 'GameEnvAdapter';
-  const wasmGame = new wasmBindgen[wasmName](
+  const wasmGame = new wasmAdapter[wasmName](
     broadcastUnchanged,
     wasmConfig.encoderKeys,
     wasmConfig.initConfig,

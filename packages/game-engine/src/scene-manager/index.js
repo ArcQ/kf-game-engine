@@ -67,7 +67,9 @@ import { forkJoin, of } from 'rxjs';
 import {
   concat, map, tap, catchError,
 } from 'rxjs/operators';
-import { curry, mergeDeepRight, pathOr, pipe } from 'ramda';
+import {
+  curry, mergeDeepRight, pathOr, pipe,
+} from 'ramda';
 import createWasmGame, { runOnWasmLoad } from 'wasm-game';
 
 import { actions as gameEngineActions } from 'store/ducks';
@@ -181,15 +183,14 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
      * @returns {undefined}
      */
     onFinishLoad(asyncConfig) {
-      runOnWasmLoad((wasm, wasmBindgen) => {
+      runOnWasmLoad((wasmAdapter) => {
         window.encoderKeys = sceneObj.encoderKeys;
         // TODO should load earlier and be the last 10% that gets loaded
         const {
           gameLoop,
           wasmInterface,
         } = createWasmGame({
-          wasm,
-          wasmBindgen,
+          wasmAdapter,
           fps: 40,
           wasmConfig: {
             name: sceneObj.wasmName,

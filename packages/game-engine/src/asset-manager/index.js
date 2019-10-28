@@ -34,8 +34,7 @@ function load(engine, assetUrl, { assets }) {
       observer.complete();
       return;
     }
-    const combinedDicts = combineDicts(engine, notAddedDicts);
-    combinedDicts
+    combineDicts(engine, notAddedDicts)
       .reduce((loader, { dictName, key, assetName }) => ((loadedDicts.indexOf(dictName) === -1)
         ? loader.add(`${dictName}_${key}`, `${assetUrl}${assetName}`)
         : loader),
