@@ -16,21 +16,22 @@ export function createArrFromBuffer(buffer) {
 
 function createWasmInterface({ onWasmStateChange }) {
   return {
-    update: args => _requestAnimationFrame(() =>
-      compose(
-        onWasmStateChange,
-        createArrFromBuffer,
-      )(args)),
+    update: args =>
+      _requestAnimationFrame(() =>
+        compose(onWasmStateChange, createArrFromBuffer)(args),
+      ),
   };
 }
 
 function startGameLoop(fps, onTick) {
   const config = {
     running: true,
-    stop: () => { config.running = false; },
+    stop: () => {
+      config.running = false;
+    },
   };
   let lastTime;
-  const tick = (curTime) => {
+  const tick = curTime => {
     setTimeout(() => {
       if (!config.running) return;
       const dt = curTime - lastTime;
@@ -53,9 +54,9 @@ function startGameLoop(fps, onTick) {
  * @returns {undefined}
  */
 export function setWasmInterface(globalOverride) {
-  return (props) => {
+  return ({ update, ...props }) => {
     const g = globalOverride || getWindow();
-    g.js_wasm_adapter = { ...props };
+    g.js_wasm_adapter = { update, ...props };
   };
 }
 
@@ -67,7 +68,8 @@ export function setWasmInterface(globalOverride) {
  */
 export function runOnWasmLoad(cb) {
   // check for wasm_bindgen for rust or check the manually set wasmAdapter
-  const _cb = () => cb(getWindow(['wasm_bindgen']) || getWindow(['wasmAdapter']));
+  const _cb = () =>
+    cb(getWindow(['wasm_bindgen']) || getWindow(['wasmAdapter']));
   if (getWindow(['wasmLoaded'])) {
     _cb();
   } else {
@@ -98,6 +100,8 @@ export default function createWasmGame({
   setUpEventListener({ onWasmStateChange });
 
   const wasmName = wasmConfig.name || 'GameEnvAdapter';
+  console.log(wasmName);
+  console.log(wasmConfig);
   const wasmGame = new wasmAdapter[wasmName](
     broadcastUnchanged,
     wasmConfig.encoderKeys,
@@ -116,7 +120,7 @@ export default function createWasmGame({
     wasmInterface: {
       toWasm: {
         onTick,
-        reset: (state) => {
+        reset: state => {
           wasmGame.reset(state);
         },
         onEvent: a => wasmGame.on_event(a),

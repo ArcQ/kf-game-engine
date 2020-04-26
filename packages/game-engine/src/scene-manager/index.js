@@ -64,12 +64,8 @@
  */
 
 import { forkJoin, of } from 'rxjs';
-import {
-  concat, map, tap, catchError,
-} from 'rxjs/operators';
-import {
-  curry, mergeDeepRight, pathOr, pipe,
-} from 'ramda';
+import { concat, map, tap, catchError } from 'rxjs/operators';
+import { curry, mergeDeepRight, pathOr, pipe } from 'ramda';
 import createWasmGame, { runOnWasmLoad } from 'wasm-game';
 
 import { actions as gameEngineActions } from 'store/ducks';
@@ -98,11 +94,12 @@ function _createLoadObs(engine, wrappedScene, assetUrl) {
   //   state: { loadingScene: true },
   // };
   const launchLoadingScene$ = tap(null, null, () =>
-    engine.ui.dispatch(gameEngineActions.pushLocation({ path: loadingSceneObj.uiRoute })));
-  const setLoadPercentage$ = map(({ percentage }) => {
     engine.ui.dispatch(
-      gameEngineActions.setLoadPercentage({ percentage }),
-    );
+      gameEngineActions.pushLocation({ path: loadingSceneObj.uiRoute }),
+    ),
+  );
+  const setLoadPercentage$ = map(({ percentage }) => {
+    engine.ui.dispatch(gameEngineActions.setLoadPercentage({ percentage }));
     if (wrappedScene.onLoadNext) wrappedScene.onLoadNext();
   });
 
@@ -113,7 +110,7 @@ function _createLoadObs(engine, wrappedScene, assetUrl) {
   );
 
   return forkJoin(loadAssetPipe$, sceneCustomLoad$).pipe(
-    catchError((e) => {
+    catchError(e => {
       console.warn(`error in loading scene ${wrappedScene.name}: ${e}`); //eslint-disable-line
       if (wrappedScene.onLoadError) wrappedScene.onLoadError(e);
     }),
@@ -131,25 +128,27 @@ function _createLoadObs(engine, wrappedScene, assetUrl) {
  */
 function _loadScene(engine, wrappedScene, assetUrl) {
   const loadScene$ = _createLoadObs(engine, wrappedScene, assetUrl);
-  const obs$ = (wrappedScene.willLoad)
-    ? forkJoin(wrappedScene.willLoad(), loadScene$) : loadScene$;
+  const obs$ = wrappedScene.willLoad
+    ? forkJoin(wrappedScene.willLoad(), loadScene$)
+    : loadScene$;
 
-  obs$.subscribe(
-    ([asyncConfig]) => { //eslint-disable-line
-      engine.ui.dispatch(gameEngineActions.pushLocation({ path: wrappedScene.uiRoute }));
-      wrappedScene.onFinishLoad(asyncConfig);
-    },
-  );
+  obs$.subscribe(([asyncConfig]) => {
+    //eslint-disable-line
+    engine.ui.dispatch(
+      gameEngineActions.pushLocation({ path: wrappedScene.uiRoute }),
+    );
+    wrappedScene.onFinishLoad(asyncConfig);
+  });
 }
 
 function setUpObserversAndAutoPlay(autoPlayK, sceneObj, engine) {
   resetSubject(autoPlayK, sceneObj.initConfig);
-  engine.resetWasm = (newState) => {
+  engine.resetWasm = newState => {
     resetSubject(autoPlayK, sceneObj, newState);
     engine.resetWasm(newState);
   };
 
-  import('../auto-play/autoPlay').then((module) => {
+  import('../auto-play/autoPlay').then(module => {
     const autoPlay = module.default;
     autoPlay(autoPlayK, engine.onEvent, sceneObj.initConfig);
   });
@@ -183,26 +182,27 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
      * @returns {undefined}
      */
     onFinishLoad(asyncConfig) {
-      runOnWasmLoad((wasmAdapter) => {
+      runOnWasmLoad(wasmAdapter => {
         window.encoderKeys = sceneObj.encoderKeys;
         // TODO should load earlier and be the last 10% that gets loaded
-        const {
-          gameLoop,
-          wasmInterface,
-        } = createWasmGame({
+        const { gameLoop, wasmInterface } = createWasmGame({
           wasmAdapter,
           fps: 40,
           wasmConfig: {
             name: sceneObj.wasmName,
             encoderKeys: sceneObj.encoderKeys,
-            initConfig: flatten(mergeDeepRight(sceneObj.initConfig, asyncConfig), { safe: true }),
+            // initConfig: flatten(mergeDeepRight(sceneObj.initConfig, asyncConfig), { safe: true }),
+            initConfig: mergeDeepRight(sceneObj.initConfig, asyncConfig),
           },
-          onWasmStateChange: (stateDiffBytes) => {
+          onWasmStateChange: stateDiffBytes => {
             if (autoPlayK) {
               nextStateSubject(autoPlayK, stateDiffBytes);
             }
-            if (typeof sceneObj.update === 'function') sceneObj.update(stateDiffBytes);
-            sceneObj.encoder.decodeByteArray(sceneObj.updateHandlers)(stateDiffBytes);
+            if (typeof sceneObj.update === 'function')
+              sceneObj.update(stateDiffBytes);
+            sceneObj.encoder.decodeByteArray(sceneObj.updateHandlers)(
+              stateDiffBytes,
+            );
           },
         });
 
@@ -212,11 +212,7 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
         engine.resetWasm = wasmInterface.toWasm.reset;
 
         if (autoPlayK) {
-          setUpObserversAndAutoPlay(
-            autoPlayK,
-            sceneObj,
-            engine,
-          );
+          setUpObserversAndAutoPlay(autoPlayK, sceneObj, engine);
         }
 
         // TODO wait on mount of ui elements
@@ -229,7 +225,7 @@ function _wrapInSceneHelpers(engine, sceneObj, assetUrl) {
 }
 
 /** @namespace sceneManager * */
-const sceneManager = (engine) => {
+const sceneManager = engine => {
   const self = {
     sceneDict: undefined,
     assetUrl: undefined,
