@@ -5,7 +5,7 @@
   "license": "MIT",
   "dependencies": {
     "@kf/game-utils": "^0.0.0",
-    "flat": "^4.1.0",
+    "flat": "^5.0.1",
     "pixi.js": "4",
     "ramda": "^0.26.1",
     "rxjs": "^6.5.2",
